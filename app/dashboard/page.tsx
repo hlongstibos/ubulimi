@@ -66,6 +66,9 @@ export default async function DashboardPage() {
         <Link href="/camps" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
           Camps
         </Link>
+        <Link href="/medicine" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Medicine
+        </Link>
       </nav>
 
       <section style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>

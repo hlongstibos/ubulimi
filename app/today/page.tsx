@@ -40,6 +40,9 @@ export default async function TodayPage() {
         <Link href="/camps" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
           Camps
         </Link>
+        <Link href="/medicine" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Medicine
+        </Link>
       </nav>
 
       {/* The "Log Event" flow (tag ID, symptoms, medicine suggestion) is the
