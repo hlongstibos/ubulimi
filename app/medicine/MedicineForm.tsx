@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import TagInput from "./TagInput";
+import TagInput from "@/app/ui/TagInput";
 
 export type Medicine = {
   id: string;

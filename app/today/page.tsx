@@ -34,6 +34,9 @@ export default async function TodayPage() {
       </header>
 
       <nav style={{ display: "flex", gap: 16, marginBottom: 24 }}>
+        <Link href="/log-event" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Log event
+        </Link>
         <Link href="/animals" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
           Animals
         </Link>
