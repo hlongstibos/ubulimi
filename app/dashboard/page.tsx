@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -57,6 +58,15 @@ export default async function DashboardPage() {
           {farm?.name ?? "Your Farm"} &middot; Owner
         </p>
       </header>
+
+      <nav style={{ display: "flex", gap: 16, marginBottom: 24 }}>
+        <Link href="/animals" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Animals
+        </Link>
+        <Link href="/camps" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Camps
+        </Link>
+      </nav>
 
       <section style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
         <StatCard label="Animals on farm" value={animalCount ?? 0} />

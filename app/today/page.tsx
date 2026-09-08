@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -31,6 +32,15 @@ export default async function TodayPage() {
         </h1>
         <p style={{ color: "var(--text-muted)", marginTop: 4 }}>Today&apos;s activity</p>
       </header>
+
+      <nav style={{ display: "flex", gap: 16, marginBottom: 24 }}>
+        <Link href="/animals" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Animals
+        </Link>
+        <Link href="/camps" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+          Camps
+        </Link>
+      </nav>
 
       {/* The "Log Event" flow (tag ID, symptoms, medicine suggestion) is the
           next build step — this view currently shows recent activity only. */}
