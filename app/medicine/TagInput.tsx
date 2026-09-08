@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useState, type ClipboardEvent, type KeyboardEvent } from "react";
+
+const SEPARATORS = /[,\n·]+/;
 
 const chipStyle: React.CSSProperties = {
   display: "inline-flex",
@@ -22,9 +24,19 @@ export default function TagInput({
 }) {
   const [draft, setDraft] = useState("");
 
+  function addMany(raw: string) {
+    const parts = raw
+      .split(SEPARATORS)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (parts.length === 0) return;
+    const next = [...value];
+    for (const p of parts) if (!next.includes(p)) next.push(p);
+    onChange(next);
+  }
+
   function commit() {
-    const t = draft.trim();
-    if (t && !value.includes(t)) onChange([...value, t]);
+    addMany(draft);
     setDraft("");
   }
 
@@ -34,6 +46,15 @@ export default function TagInput({
       commit();
     } else if (e.key === "Backspace" && draft === "" && value.length > 0) {
       onChange(value.slice(0, -1));
+    }
+  }
+
+  function handlePaste(e: ClipboardEvent<HTMLInputElement>) {
+    const text = e.clipboardData.getData("text");
+    if (SEPARATORS.test(text)) {
+      e.preventDefault();
+      addMany(text);
+      setDraft("");
     }
   }
 
@@ -75,6 +96,7 @@ export default function TagInput({
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
         onBlur={commit}
         placeholder={value.length === 0 ? "Type a condition, press Enter" : ""}
         style={{

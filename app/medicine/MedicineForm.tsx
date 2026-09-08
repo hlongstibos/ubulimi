@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import TagInput from "./TagInput";
@@ -82,11 +82,14 @@ export default function MedicineForm({
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const inFlight = useRef(false);
   const router = useRouter();
   const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (inFlight.current) return;
+    inFlight.current = true;
     const form = e.currentTarget;
     const fd = new FormData(form);
 
@@ -143,10 +146,12 @@ export default function MedicineForm({
         (err as { message?: string })?.message ?? "Could not save. Try again.";
       setError(msg);
       setSaving(false);
+      inFlight.current = false;
       return;
     }
 
     setSaving(false);
+    inFlight.current = false;
     if (editing) {
       setSaved(true);
       router.refresh();
