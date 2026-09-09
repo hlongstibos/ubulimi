@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import AnimalForm, { type Animal } from "../AnimalForm";
 import AnimalTimeline from "../AnimalTimeline";
 import RecordSaleForm, { type SaleAnimal } from "../RecordSaleForm";
+import DownloadReport from "../DownloadReport";
+import type { ReportData } from "../animalReport";
 
 export default async function AnimalDetailPage({
   params,
@@ -32,6 +34,7 @@ export default async function AnimalDetailPage({
     { data: tx },
     { data: vx },
     { data: sales },
+    { data: farm },
   ] = await Promise.all([
     supabase
       .from("animals")
@@ -68,6 +71,11 @@ export default async function AnimalDetailPage({
       .eq("animal_id", id)
       .eq("farm_id", profile.farm_id)
       .order("sale_date", { ascending: false }),
+    supabase
+      .from("farms")
+      .select("name")
+      .eq("id", profile.farm_id)
+      .single(),
   ]);
 
   if (!animal) notFound();
@@ -86,6 +94,31 @@ export default async function AnimalDetailPage({
     vaccinationType:
       (v.vaccination_types as { name?: string } | null)?.name ?? null,
   }));
+
+  const latestSale =
+    animal.status === "sold" && sales && sales.length > 0 ? sales[0] : null;
+
+  const reportData: ReportData = {
+    farmName: (farm as { name?: string } | null)?.name ?? null,
+    generatedAt: new Date().toISOString(),
+    animal: {
+      tag_id: animal.tag_id,
+      species: animal.species,
+      breed: animal.breed,
+      sex: animal.sex,
+      dob: animal.dob,
+      status: animal.status,
+    },
+    vaccinations,
+    treatments,
+    sale: latestSale
+      ? {
+          buyer: latestSale.buyer,
+          price: latestSale.price as number | null,
+          sale_date: latestSale.sale_date,
+        }
+      : null,
+  };
 
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
@@ -116,7 +149,18 @@ export default async function AnimalDetailPage({
       />
 
       <section style={{ marginTop: 32 }}>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>History</h2>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            gap: 16,
+            marginBottom: 12,
+          }}
+        >
+          <h2 style={{ fontSize: 16, margin: 0 }}>History</h2>
+          <DownloadReport data={reportData} />
+        </div>
         <AnimalTimeline
           health={he ?? []}
           treatments={treatments}
