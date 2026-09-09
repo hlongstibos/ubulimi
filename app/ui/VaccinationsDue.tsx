@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export type DueRow = {
   animal_id: string;
   tag_id: string;
@@ -49,25 +51,34 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
                 urgent ? "var(--terracotta)" : "var(--moss)"
               }`,
               borderRadius: 8,
-              padding: "10px 14px",
               marginBottom: 8,
             }}
           >
-            <strong>{r.tag_id}</strong>{" "}
-            <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
-              {r.species}
-            </span>
-            <div style={{ fontSize: 13, marginTop: 2 }}>
-              {r.vaccination_type_name} —{" "}
-              <span
-                style={{
-                  color: urgent ? "var(--terracotta)" : "var(--text-muted)",
-                  fontWeight: urgent ? 600 : 400,
-                }}
-              >
-                {text}
+            <Link
+              href="/log-vaccination"
+              style={{
+                display: "block",
+                padding: "10px 14px",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              <strong>{r.tag_id}</strong>{" "}
+              <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                {r.species}
               </span>
-            </div>
+              <div style={{ fontSize: 13, marginTop: 2 }}>
+                {r.vaccination_type_name} —{" "}
+                <span
+                  style={{
+                    color: urgent ? "var(--terracotta)" : "var(--text-muted)",
+                    fontWeight: urgent ? 600 : 400,
+                  }}
+                >
+                  {text}
+                </span>
+              </div>
+            </Link>
           </li>
         );
       })}

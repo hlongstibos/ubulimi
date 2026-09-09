@@ -42,17 +42,16 @@ export default async function TodayPage() {
 
   return (
     <main style={{ maxWidth: 600, margin: "0 auto", padding: "32px 20px" }}>
-      <header style={{ marginBottom: 24 }}>
+      <header style={{ marginBottom: 20 }}>
         <h1 style={{ color: "var(--forest)", marginBottom: 0 }}>
           Hi {profile.full_name ?? "there"}
         </h1>
-        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>Today&apos;s activity</p>
+        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>
+          Today&apos;s tasks
+        </p>
       </header>
 
-      <nav style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
-        <Link href="/log-event" style={navLink}>
-          Log event
-        </Link>
+      <nav style={{ display: "flex", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
         <Link href="/log-vaccination" style={navLink}>
           Log vaccination
         </Link>
@@ -73,8 +72,28 @@ export default async function TodayPage() {
         </Link>
       </nav>
 
+      <Link
+        href="/log-event"
+        style={{
+          display: "block",
+          textAlign: "center",
+          padding: "14px 20px",
+          background: "var(--terracotta)",
+          color: "white",
+          borderRadius: 24,
+          fontWeight: 700,
+          fontSize: 16,
+          textDecoration: "none",
+          marginBottom: 28,
+        }}
+      >
+        Log a health event
+      </Link>
+
       <section style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Vaccinations due</h2>
+        <h2 style={{ fontSize: 16, marginBottom: 12 }}>
+          Due &amp; overdue vaccinations
+        </h2>
         <VaccinationsDue rows={(vaccinationsDue ?? []) as DueRow[]} />
       </section>
 

@@ -43,13 +43,15 @@ export default async function DashboardPage() {
     .eq("farm_id", profile.farm_id)
     .eq("status", "open");
 
-  // Placeholder threshold comparison for V1 — swap for a proper
-  // "stock_qty < restock_threshold" filter once that logic is wired up.
-  const { count: lowStockCount } = await supabase
+  // PostgREST can't compare two columns in a filter, so pull the two
+  // numbers and count in JS: low stock = below the item's own threshold.
+  const { data: medStock } = await supabase
     .from("medicine_inventory")
-    .select("*", { count: "exact", head: true })
-    .eq("farm_id", profile.farm_id)
-    .lt("stock_qty", 5);
+    .select("stock_qty, restock_threshold")
+    .eq("farm_id", profile.farm_id);
+  const lowStockCount = (medStock ?? []).filter(
+    (m) => Number(m.stock_qty) < Number(m.restock_threshold)
+  ).length;
 
   const { data: recentEvents } = await supabase
     .from("health_events")
@@ -105,7 +107,11 @@ export default async function DashboardPage() {
       <section style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
         <StatCard label="Animals on farm" value={animalCount ?? 0} />
         <StatCard label="Open health events" value={openHealthCount ?? 0} />
-        <StatCard label="Low stock medicines" value={lowStockCount ?? 0} />
+        <StatCard label="Low stock medicines" value={lowStockCount} />
+        <StatCard
+          label="Vaccinations due this week"
+          value={(vaccinationsDue ?? []).length}
+        />
       </section>
 
       <section style={{ marginBottom: 32 }}>
