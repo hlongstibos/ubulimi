@@ -39,49 +39,77 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
   const todayMs = today.getTime();
 
   return (
-    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-      {rows.map((r, i) => {
-        const { text, urgent } = describe(r, todayMs);
-        return (
-          <li
-            key={`${r.animal_id}-${r.vaccination_type_name}-${i}`}
-            style={{
-              border: "1px solid var(--card-border)",
-              borderLeft: `3px solid ${
-                urgent ? "var(--terracotta)" : "var(--moss)"
-              }`,
-              borderRadius: 8,
-              marginBottom: 8,
-            }}
-          >
-            <Link
-              href="/log-vaccination"
+    <details style={{ border: "1px solid var(--card-border)", borderRadius: 8 }}>
+      <summary
+        style={{
+          cursor: "pointer",
+          padding: "11px 14px",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          fontSize: 14,
+        }}
+      >
+        <span className="vd-caret" style={{ color: "var(--text-muted)" }}>
+          ▸
+        </span>
+        <strong style={{ color: "var(--terracotta)" }}>{rows.length}</strong>
+        <span>due &amp; overdue</span>
+        <span
+          style={{
+            marginLeft: "auto",
+            color: "var(--text-muted)",
+            fontSize: 12,
+          }}
+        >
+          tap to view
+        </span>
+      </summary>
+
+      <ul style={{ listStyle: "none", padding: "0 10px 10px", margin: 0 }}>
+        {rows.map((r, i) => {
+          const { text, urgent } = describe(r, todayMs);
+          return (
+            <li
+              key={`${r.animal_id}-${r.vaccination_type_name}-${i}`}
               style={{
-                display: "block",
-                padding: "10px 14px",
-                color: "inherit",
-                textDecoration: "none",
+                border: "1px solid var(--card-border)",
+                borderLeft: `3px solid ${
+                  urgent ? "var(--terracotta)" : "var(--moss)"
+                }`,
+                borderRadius: 8,
+                marginTop: 8,
               }}
             >
-              <strong>{r.tag_id}</strong>{" "}
-              <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                {r.species}
-              </span>
-              <div style={{ fontSize: 13, marginTop: 2 }}>
-                {r.vaccination_type_name} —{" "}
-                <span
-                  style={{
-                    color: urgent ? "var(--terracotta)" : "var(--text-muted)",
-                    fontWeight: urgent ? 600 : 400,
-                  }}
-                >
-                  {text}
+              <Link
+                href="/log-vaccination"
+                style={{
+                  display: "block",
+                  padding: "10px 14px",
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
+                <strong>{r.tag_id}</strong>{" "}
+                <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                  {r.species}
                 </span>
-              </div>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+                <div style={{ fontSize: 13, marginTop: 2 }}>
+                  {r.vaccination_type_name} —{" "}
+                  <span
+                    style={{
+                      color: urgent ? "var(--terracotta)" : "var(--text-muted)",
+                      fontWeight: urgent ? 600 : 400,
+                    }}
+                  >
+                    {text}
+                  </span>
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </details>
   );
 }

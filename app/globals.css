@@ -24,3 +24,18 @@ button {
   font-family: inherit;
   font-size: 15px;
 }
+
+/* Collapsible sections (<details>): drop the native marker, use our own caret. */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+.vd-caret {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+details[open] > summary .vd-caret {
+  transform: rotate(90deg);
+}
