@@ -82,6 +82,9 @@ export default async function DashboardPage() {
         <Link href="/log-vaccination" style={navLink}>
           Log vaccination
         </Link>
+        <Link href="/log-feeding" style={navLink}>
+          Log feeding
+        </Link>
         <Link href="/animals" style={navLink}>
           Animals
         </Link>
@@ -90,6 +93,9 @@ export default async function DashboardPage() {
         </Link>
         <Link href="/medicine" style={navLink}>
           Medicine
+        </Link>
+        <Link href="/feed" style={navLink}>
+          Feed
         </Link>
         <Link href="/vaccination-types" style={navLink}>
           Vaccination types
