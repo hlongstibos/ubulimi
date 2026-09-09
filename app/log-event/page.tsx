@@ -34,6 +34,7 @@ export default async function LogEventPage() {
     .from("animals")
     .select("id, tag_id, species")
     .eq("farm_id", profile.farm_id)
+    .neq("status", "sold")
     .order("tag_id");
 
   return (
