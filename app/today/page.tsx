@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import VaccinationsDue, { type DueRow } from "@/app/ui/VaccinationsDue";
+
+const navLink: React.CSSProperties = {
+  color: "var(--forest)",
+  fontSize: 14,
+  fontWeight: 600,
+  textDecoration: "none",
+};
 
 export default async function TodayPage() {
   const supabase = await createClient();
@@ -24,6 +32,14 @@ export default async function TodayPage() {
     .order("created_at", { ascending: false })
     .limit(5);
 
+  const { data: vaccinationsDue } = await supabase
+    .from("vaccinations_due")
+    .select(
+      "animal_id, tag_id, species, vaccination_type_name, reason, due_date"
+    )
+    .eq("farm_id", profile.farm_id)
+    .order("due_date", { ascending: true, nullsFirst: true });
+
   return (
     <main style={{ maxWidth: 600, margin: "0 auto", padding: "32px 20px" }}>
       <header style={{ marginBottom: 24 }}>
@@ -33,24 +49,30 @@ export default async function TodayPage() {
         <p style={{ color: "var(--text-muted)", marginTop: 4 }}>Today&apos;s activity</p>
       </header>
 
-      <nav style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-        <Link href="/log-event" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+      <nav style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+        <Link href="/log-event" style={navLink}>
           Log event
         </Link>
-        <Link href="/animals" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+        <Link href="/log-vaccination" style={navLink}>
+          Log vaccination
+        </Link>
+        <Link href="/animals" style={navLink}>
           Animals
         </Link>
-        <Link href="/camps" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+        <Link href="/camps" style={navLink}>
           Camps
         </Link>
-        <Link href="/medicine" style={{ color: "var(--forest)", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+        <Link href="/medicine" style={navLink}>
           Medicine
         </Link>
       </nav>
 
-      {/* The "Log Event" flow (tag ID, symptoms, medicine suggestion) is the
-          next build step — this view currently shows recent activity only. */}
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Vaccinations due</h2>
+        <VaccinationsDue rows={(vaccinationsDue ?? []) as DueRow[]} />
+      </section>
 
+      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Recent activity</h2>
       {!recentEvents || recentEvents.length === 0 ? (
         <p style={{ color: "var(--text-muted)" }}>Nothing logged yet.</p>
       ) : (
