@@ -4,6 +4,26 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+// Demo access: one-tap sign-in for a pilot / demo deployment. Each role's
+// credentials come from env vars (referenced literally so Next can inline
+// them). If they aren't set, the whole demo section is hidden — nothing
+// ships unless a demo deployment opts in. Point these at DEDICATED demo
+// accounts with throwaway data, never a real owner account: NEXT_PUBLIC_
+// values are readable in the browser bundle.
+const DEMO = {
+  owner: {
+    email: process.env.NEXT_PUBLIC_DEMO_OWNER_EMAIL,
+    password: process.env.NEXT_PUBLIC_DEMO_OWNER_PASSWORD,
+  },
+  worker: {
+    email: process.env.NEXT_PUBLIC_DEMO_WORKER_EMAIL,
+    password: process.env.NEXT_PUBLIC_DEMO_WORKER_PASSWORD,
+  },
+} as const;
+
+const demoOwnerReady = Boolean(DEMO.owner.email && DEMO.owner.password);
+const demoWorkerReady = Boolean(DEMO.worker.email && DEMO.worker.password);
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,12 +32,11 @@ export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function signIn(creds: { email: string; password: string }) {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword(creds);
 
     if (error) {
       setError(error.message);
@@ -27,6 +46,17 @@ export default function LoginPage() {
 
     router.push("/");
     router.refresh();
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    void signIn({ email, password });
+  }
+
+  function demoLogin(role: "owner" | "worker") {
+    const creds = DEMO[role];
+    if (!creds.email || !creds.password) return;
+    void signIn({ email: creds.email, password: creds.password });
   }
 
   return (
@@ -92,9 +122,67 @@ export default function LoginPage() {
             opacity: loading ? 0.7 : 1,
           }}
         >
-          {loading ? "Logging in\u2026" : "Log In"}
+          {loading ? "Logging in…" : "Log In"}
         </button>
       </form>
+
+      {demoOwnerReady && (
+        <div style={{ marginTop: 28 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              color: "var(--text-muted)",
+              fontSize: 11,
+              letterSpacing: 0.6,
+            }}
+          >
+            <span style={{ flex: 1, height: 1, background: "var(--card-border)" }} />
+            DEMO ACCESS
+            <span style={{ flex: 1, height: 1, background: "var(--card-border)" }} />
+          </div>
+
+          <p style={{ color: "var(--text-muted)", fontSize: 12, margin: "10px 0 12px" }}>
+            Sign in without a password — pick a role.
+          </p>
+
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              type="button"
+              onClick={() => demoLogin("owner")}
+              disabled={loading}
+              style={demoButtonStyle(loading)}
+            >
+              Owner
+            </button>
+            {demoWorkerReady && (
+              <button
+                type="button"
+                onClick={() => demoLogin("worker")}
+                disabled={loading}
+                style={demoButtonStyle(loading)}
+              >
+                Worker
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
+}
+
+function demoButtonStyle(loading: boolean): React.CSSProperties {
+  return {
+    flex: 1,
+    padding: "10px 12px",
+    background: "transparent",
+    color: "var(--forest)",
+    border: "1px solid var(--forest)",
+    borderRadius: 24,
+    fontWeight: 600,
+    cursor: loading ? "default" : "pointer",
+    opacity: loading ? 0.7 : 1,
+  };
 }
