@@ -30,13 +30,7 @@ const fieldStyle: React.CSSProperties = {
   background: "#fff",
 };
 
-export default function RecordSaleForm({
-  animal,
-  farmId,
-}: {
-  animal: SaleAnimal;
-  farmId: string;
-}) {
+export default function RecordSaleForm({ animal }: { animal: SaleAnimal }) {
   const router = useRouter();
   const supabase = createClient();
   const [error, setError] = useState<string | null>(null);
@@ -135,13 +129,14 @@ export default function RecordSaleForm({
       })),
     };
 
-    const { error: insErr } = await supabase.from("sales").insert({
-      farm_id: farmId,
-      animal_id: animal.id,
-      buyer,
-      price,
-      sale_date: saleDate,
-      history_snapshot: historySnapshot,
+    // record_sale() inserts the sale and marks the animal 'sold' in one
+    // transaction; farm scoping is done inside via current_farm_id().
+    const { error: insErr } = await supabase.rpc("record_sale", {
+      p_animal_id: animal.id,
+      p_buyer: buyer,
+      p_price: price,
+      p_sale_date: saleDate,
+      p_history_snapshot: historySnapshot,
     });
 
     if (insErr) {

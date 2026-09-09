@@ -146,10 +146,7 @@ export default async function AnimalDetailPage({
               ))}
             </ul>
           )}
-          <RecordSaleForm
-            animal={animal as SaleAnimal}
-            farmId={profile.farm_id}
-          />
+          <RecordSaleForm animal={animal as SaleAnimal} />
         </section>
       )}
     </main>
