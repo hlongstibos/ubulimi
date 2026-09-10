@@ -5,7 +5,12 @@ import LogVaccinationForm, {
   type VaccinationTypeOption,
 } from "./LogVaccinationForm";
 
-export default async function LogVaccinationPage() {
+export default async function LogVaccinationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ animal?: string; type?: string }>;
+}) {
+  const { animal: initialAnimalId, type: initialTypeId } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -70,6 +75,8 @@ export default async function LogVaccinationPage() {
         animals={animals ?? []}
         types={(types ?? []) as unknown as VaccinationTypeOption[]}
         home={home}
+        initialAnimalId={initialAnimalId ?? null}
+        initialTypeId={initialTypeId ?? ""}
       />
     </main>
   );

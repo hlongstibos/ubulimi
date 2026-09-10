@@ -61,7 +61,7 @@ export default async function DashboardPage() {
   const { data: vaccinationsDue } = await supabase
     .from("vaccinations_due")
     .select(
-      "animal_id, tag_id, species, vaccination_type_name, reason, due_date"
+      "animal_id, tag_id, species, vaccination_type_id, vaccination_type_name, reason, due_date"
     )
     .eq("farm_id", profile.farm_id)
     .order("due_date", { ascending: true, nullsFirst: true });

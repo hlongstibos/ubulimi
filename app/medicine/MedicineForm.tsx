@@ -215,11 +215,11 @@ export default function MedicineForm({
           <input
             name="unit"
             list="med-unit-options"
-            defaultValue={medicine?.unit ?? "units"}
+            defaultValue={medicine?.unit ?? "ml"}
             style={fieldStyle}
           />
           <datalist id="med-unit-options">
-            {["units", "bottles", "vials", "doses", "ml", "litres", "sachets", "tablets", "tubes", "cans"].map(
+            {["ml", "L", "bottles", "vials", "doses", "sachets", "tablets", "tubes", "units"].map(
               (u) => (
                 <option key={u} value={u} />
               )
@@ -247,6 +247,18 @@ export default function MedicineForm({
           />
         </Field>
       </div>
+
+      <p
+        style={{
+          fontSize: 12,
+          color: "var(--text-muted)",
+          margin: "8px 0 0",
+        }}
+      >
+        For injectables and liquids use <strong>ml</strong> or <strong>L</strong>.
+        Treatment doses are entered in ml and deducted from stock; if stock is in
+        L it is reduced by the ml equivalent.
+      </p>
 
       <div style={{ marginTop: 14 }}>
         <Field label="Treats conditions">

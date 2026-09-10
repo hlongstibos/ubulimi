@@ -33,16 +33,24 @@ export default function LogVaccinationForm({
   animals,
   types,
   home,
+  initialAnimalId = null,
+  initialTypeId = "",
 }: {
   animals: PickableAnimal[];
   types: VaccinationTypeOption[];
   home: string;
+  initialAnimalId?: string | null;
+  initialTypeId?: string;
 }) {
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
 
-  const [animalId, setAnimalId] = useState<string | null>(null);
-  const [typeId, setTypeId] = useState("");
+  const [animalId, setAnimalId] = useState<string | null>(
+    initialAnimalId && animals.some((a) => a.id === initialAnimalId)
+      ? initialAnimalId
+      : null
+  );
+  const [typeId, setTypeId] = useState(initialTypeId);
   const [doses, setDoses] = useState("1");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);

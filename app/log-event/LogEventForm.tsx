@@ -55,8 +55,7 @@ export default function LogEventForm({
 
   const [treatment, setTreatment] = useState<{
     medicineId: string;
-    dosage: string;
-    quantity: string;
+    doseMl: string;
   } | null>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -113,8 +112,8 @@ export default function LogEventForm({
       setError("Add at least one symptom or a note.");
       return;
     }
-    if (treatment && !(parseFloat(treatment.quantity) > 0)) {
-      setError("Enter a treatment quantity greater than 0.");
+    if (treatment && !(parseFloat(treatment.doseMl) > 0)) {
+      setError("Enter a dose in ml greater than 0.");
       return;
     }
 
@@ -147,8 +146,7 @@ export default function LogEventForm({
         p_animal_id: animalId,
         p_medicine_id: treatment.medicineId,
         p_health_event_id: he.id,
-        p_dosage: treatment.dosage.trim() || null,
-        p_quantity: parseFloat(treatment.quantity),
+        p_dose_ml: parseFloat(treatment.doseMl),
       });
       if (rpcErr) {
         setError(
@@ -335,11 +333,7 @@ export default function LogEventForm({
                         onClick={() =>
                           chosen
                             ? setTreatment(null)
-                            : setTreatment({
-                                medicineId: s.id,
-                                dosage: "",
-                                quantity: "1",
-                              })
+                            : setTreatment({ medicineId: s.id, doseMl: "" })
                         }
                         style={{
                           alignSelf: "flex-start",
@@ -361,47 +355,34 @@ export default function LogEventForm({
                     </div>
 
                     {chosen && treatment && (
-                      <div
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns:
-                            "repeat(auto-fit, minmax(160px, 1fr))",
-                          gap: 12,
-                          marginTop: 12,
-                        }}
-                      >
+                      <div style={{ marginTop: 12 }}>
                         <label style={{ display: "block" }}>
-                          <span style={labelStyle}>Dosage</span>
-                          <input
-                            value={treatment.dosage}
-                            onChange={(e) =>
-                              setTreatment({
-                                ...treatment,
-                                dosage: e.target.value,
-                              })
-                            }
-                            placeholder="e.g. 8 ml / 100 kg"
-                            style={fieldStyle}
-                          />
-                        </label>
-                        <label style={{ display: "block" }}>
-                          <span style={labelStyle}>
-                            Quantity to deduct ({s.unit})
-                          </span>
+                          <span style={labelStyle}>Dose given (ml)</span>
                           <input
                             type="number"
                             step="any"
                             min="0"
-                            value={treatment.quantity}
+                            value={treatment.doseMl}
                             onChange={(e) =>
                               setTreatment({
                                 ...treatment,
-                                quantity: e.target.value,
+                                doseMl: e.target.value,
                               })
                             }
+                            placeholder="e.g. 20"
                             style={fieldStyle}
                           />
                         </label>
+                        <p
+                          style={{
+                            fontSize: 12,
+                            color: "var(--text-muted)",
+                            margin: "6px 0 0",
+                          }}
+                        >
+                          Deducted from stock ({s.stock_qty} {s.unit}) — litres
+                          reduced by the ml equivalent.
+                        </p>
                       </div>
                     )}
                   </li>

@@ -5,6 +5,7 @@ export type DueRow = {
   animal_id: string;
   tag_id: string;
   species: string;
+  vaccination_type_id: string;
   vaccination_type_name: string;
   reason: "initial" | "booster";
   due_date: string | null;
@@ -66,7 +67,7 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
               }}
             >
               <Link
-                href="/log-vaccination"
+                href={`/log-vaccination?animal=${r.animal_id}&type=${r.vaccination_type_id}`}
                 style={{
                   display: "block",
                   padding: "10px 14px",
