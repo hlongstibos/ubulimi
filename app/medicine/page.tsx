@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import MedicineForm from "./MedicineForm";
+import Collapsible from "@/app/ui/Collapsible";
 
 type Row = {
   id: string;
@@ -69,9 +70,10 @@ export default async function MedicinePage() {
         <h1 style={{ color: "var(--forest)", margin: 0 }}>Medicine</h1>
       </header>
 
-      <section style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Add medicine</h2>
-        <MedicineForm farmId={profile.farm_id} role={profile.role} />
+      <section style={{ marginBottom: 24 }}>
+        <Collapsible title="Add medicine" defaultOpen={rows.length === 0}>
+          <MedicineForm farmId={profile.farm_id} role={profile.role} />
+        </Collapsible>
       </section>
 
       <section>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import FeedForm from "./FeedForm";
+import Collapsible from "@/app/ui/Collapsible";
 
 type Row = {
   id: string;
@@ -69,9 +70,10 @@ export default async function FeedPage() {
         <h1 style={{ color: "var(--forest)", margin: 0 }}>Feed</h1>
       </header>
 
-      <section style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Add feed</h2>
-        <FeedForm farmId={profile.farm_id} />
+      <section style={{ marginBottom: 24 }}>
+        <Collapsible title="Add feed" defaultOpen={rows.length === 0}>
+          <FeedForm farmId={profile.farm_id} />
+        </Collapsible>
       </section>
 
       <section>
