@@ -129,7 +129,8 @@ export default function VaccinationTypeForm({
         border: "1px solid var(--card-border)",
         borderRadius: 8,
         padding: 16,
-        background: "var(--light-bg)",
+        background: "#fff",
+        boxShadow: "var(--card-shadow)",
       }}
     >
       <div

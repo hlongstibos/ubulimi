@@ -169,7 +169,8 @@ export default function MedicineForm({
         border: "1px solid var(--card-border)",
         borderRadius: 8,
         padding: 16,
-        background: "var(--light-bg)",
+        background: "#fff",
+        boxShadow: "var(--card-shadow)",
       }}
     >
       <div
@@ -213,9 +214,17 @@ export default function MedicineForm({
         <Field label="Unit">
           <input
             name="unit"
+            list="med-unit-options"
             defaultValue={medicine?.unit ?? "units"}
             style={fieldStyle}
           />
+          <datalist id="med-unit-options">
+            {["units", "bottles", "vials", "doses", "ml", "litres", "sachets", "tablets", "tubes", "cans"].map(
+              (u) => (
+                <option key={u} value={u} />
+              )
+            )}
+          </datalist>
         </Field>
 
         <Field label="Restock threshold">

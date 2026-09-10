@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import Nav from "@/app/ui/Nav";
+import Collapsible from "@/app/ui/Collapsible";
 import VaccinationsDue, { type DueRow } from "@/app/ui/VaccinationsDue";
-
-const navLink: React.CSSProperties = {
-  color: "var(--forest)",
-  fontSize: 14,
-  fontWeight: 600,
-  textDecoration: "none",
-};
 
 export default async function TodayPage() {
   const supabase = await createClient();
@@ -30,7 +25,7 @@ export default async function TodayPage() {
     .select("id, notes, symptoms, created_at, animals(tag_id)")
     .eq("farm_id", profile.farm_id)
     .order("created_at", { ascending: false })
-    .limit(5);
+    .limit(8);
 
   const { data: vaccinationsDue } = await supabase
     .from("vaccinations_due")
@@ -40,86 +35,91 @@ export default async function TodayPage() {
     .eq("farm_id", profile.farm_id)
     .order("due_date", { ascending: true, nullsFirst: true });
 
+  const due = (vaccinationsDue ?? []) as DueRow[];
+  const events = recentEvents ?? [];
+
   return (
-    <main style={{ maxWidth: 600, margin: "0 auto", padding: "32px 20px" }}>
-      <header style={{ marginBottom: 20 }}>
-        <h1 style={{ color: "var(--forest)", marginBottom: 0 }}>
+    <main style={{ maxWidth: 620, margin: "0 auto", padding: "28px 20px 48px" }}>
+      <header style={{ marginBottom: 18 }}>
+        <h1
+          style={{
+            color: "var(--forest)",
+            fontSize: 24,
+            fontWeight: 800,
+            letterSpacing: "-0.01em",
+            margin: 0,
+          }}
+        >
           Hi {profile.full_name ?? "there"}
         </h1>
-        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>
+        <p style={{ color: "var(--text-muted)", margin: "4px 0 0", fontSize: 14 }}>
           Today&apos;s tasks
         </p>
       </header>
 
-      <nav style={{ display: "flex", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
-        <Link href="/log-vaccination" style={navLink}>
-          Log vaccination
-        </Link>
-        <Link href="/log-feeding" style={navLink}>
-          Log feeding
-        </Link>
-        <Link href="/animals" style={navLink}>
-          Animals
-        </Link>
-        <Link href="/camps" style={navLink}>
-          Camps
-        </Link>
-        <Link href="/medicine" style={navLink}>
-          Medicine
-        </Link>
-        <Link href="/feed" style={navLink}>
-          Feed
-        </Link>
-      </nav>
+      <Nav role={profile.role} exclude={["/log-event"]} />
 
       <Link
         href="/log-event"
         style={{
           display: "block",
           textAlign: "center",
-          padding: "14px 20px",
+          padding: "15px 20px",
           background: "var(--terracotta)",
           color: "white",
-          borderRadius: 24,
+          borderRadius: 999,
           fontWeight: 700,
           fontSize: 16,
           textDecoration: "none",
-          marginBottom: 28,
+          marginBottom: 22,
+          boxShadow: "0 2px 8px rgba(201,123,46,0.28)",
         }}
       >
         Log a health event
       </Link>
 
-      <section style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>
-          Due &amp; overdue vaccinations
-        </h2>
-        <VaccinationsDue rows={(vaccinationsDue ?? []) as DueRow[]} />
-      </section>
+      <div style={{ display: "grid", gap: 14 }}>
+        {due.length === 0 ? (
+          <Collapsible title="Vaccinations" count={0}>
+            <p style={{ color: "var(--text-muted)", margin: 0 }}>
+              Nothing due.
+            </p>
+          </Collapsible>
+        ) : (
+          <VaccinationsDue rows={due} />
+        )}
 
-      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Recent activity</h2>
-      {!recentEvents || recentEvents.length === 0 ? (
-        <p style={{ color: "var(--text-muted)" }}>Nothing logged yet.</p>
-      ) : (
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {recentEvents.map((e) => (
-            <li
-              key={e.id}
-              style={{
-                border: "1px solid var(--card-border)",
-                borderRadius: 8,
-                padding: "10px 14px",
-                marginBottom: 8,
-              }}
-            >
-              <strong>{(e.animals as { tag_id?: string } | null)?.tag_id ?? "Unknown animal"}</strong>
-              <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                {(e.symptoms ?? []).join(", ") || e.notes}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+        <Collapsible title="Recent activity" count={events.length}>
+          {events.length === 0 ? (
+            <p style={{ color: "var(--text-muted)", margin: 0 }}>
+              Nothing logged yet.
+            </p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {events.map((e) => (
+                <li
+                  key={e.id}
+                  style={{
+                    border: "1px solid var(--card-border)",
+                    borderRadius: 8,
+                    padding: "10px 14px",
+                    marginTop: 8,
+                    background: "#fff",
+                  }}
+                >
+                  <strong>
+                    {(e.animals as { tag_id?: string } | null)?.tag_id ??
+                      "Unknown animal"}
+                  </strong>
+                  <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                    {(e.symptoms ?? []).join(", ") || e.notes || "—"}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Collapsible>
+      </div>
     </main>
   );
 }

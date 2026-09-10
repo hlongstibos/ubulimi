@@ -29,8 +29,9 @@ export default function AppHeader() {
       style={{
         position: "sticky",
         top: 0,
-        zIndex: 10,
-        background: "#fff",
+        zIndex: 20,
+        background: "rgba(255,255,255,0.9)",
+        backdropFilter: "saturate(160%) blur(6px)",
         borderBottom: "1px solid var(--card-border)",
       }}
     >
@@ -38,7 +39,7 @@ export default function AppHeader() {
         style={{
           maxWidth: 900,
           margin: "0 auto",
-          padding: "12px 20px",
+          padding: "11px 20px",
           display: "flex",
           alignItems: "center",
           gap: 12,
@@ -49,9 +50,9 @@ export default function AppHeader() {
           aria-label="Home"
           style={{
             color: "var(--forest)",
-            fontWeight: 700,
-            fontSize: 16,
-            letterSpacing: 0.5,
+            fontWeight: 800,
+            fontSize: 15,
+            letterSpacing: 1.5,
             textDecoration: "none",
           }}
         >
@@ -65,12 +66,13 @@ export default function AppHeader() {
           style={{
             marginLeft: "auto",
             background: "transparent",
-            border: "none",
+            border: "1px solid var(--card-border)",
+            borderRadius: 999,
             color: "var(--text-muted)",
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 600,
             cursor: loggingOut ? "default" : "pointer",
-            padding: 0,
+            padding: "5px 12px",
           }}
         >
           {loggingOut ? "Logging out…" : "Log out"}

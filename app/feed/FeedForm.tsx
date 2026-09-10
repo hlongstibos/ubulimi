@@ -139,7 +139,8 @@ export default function FeedForm({
         border: "1px solid var(--card-border)",
         borderRadius: 8,
         padding: 16,
-        background: "var(--light-bg)",
+        background: "#fff",
+        boxShadow: "var(--card-shadow)",
       }}
     >
       <div
@@ -186,9 +187,15 @@ export default function FeedForm({
         <Field label="Unit">
           <input
             name="unit"
+            list="feed-unit-options"
             defaultValue={feed?.unit ?? "kg"}
             style={fieldStyle}
           />
+          <datalist id="feed-unit-options">
+            {["kg", "bales", "bags", "tons", "litres", "buckets"].map((u) => (
+              <option key={u} value={u} />
+            ))}
+          </datalist>
         </Field>
 
         <Field label="Cost">

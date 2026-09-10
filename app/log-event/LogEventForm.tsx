@@ -303,7 +303,7 @@ export default function LogEventForm({
                       borderLeft: "3px solid var(--moss)",
                       borderRadius: 8,
                       padding: 14,
-                      background: "var(--light-bg)",
+                      background: "#fff",
                     }}
                   >
                     <div

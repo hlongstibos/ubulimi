@@ -1,14 +1,10 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import Nav from "@/app/ui/Nav";
+import Collapsible from "@/app/ui/Collapsible";
 import VaccinationsDue, { type DueRow } from "@/app/ui/VaccinationsDue";
 
-const navLink: React.CSSProperties = {
-  color: "var(--forest)",
-  fontSize: 14,
-  fontWeight: 600,
-  textDecoration: "none",
-};
+const ON_FARM = ["active"];
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -32,10 +28,12 @@ export default async function DashboardPage() {
     .eq("id", profile.farm_id)
     .single();
 
+  // "Animals on farm" excludes sold / deceased / culled.
   const { count: animalCount } = await supabase
     .from("animals")
     .select("*", { count: "exact", head: true })
-    .eq("farm_id", profile.farm_id);
+    .eq("farm_id", profile.farm_id)
+    .in("status", ON_FARM);
 
   const { count: openHealthCount } = await supabase
     .from("health_events")
@@ -58,7 +56,7 @@ export default async function DashboardPage() {
     .select("id, notes, symptoms, created_at, animals(tag_id)")
     .eq("farm_id", profile.farm_id)
     .order("created_at", { ascending: false })
-    .limit(5);
+    .limit(8);
 
   const { data: vaccinationsDue } = await supabase
     .from("vaccinations_due")
@@ -68,82 +66,86 @@ export default async function DashboardPage() {
     .eq("farm_id", profile.farm_id)
     .order("due_date", { ascending: true, nullsFirst: true });
 
+  const due = (vaccinationsDue ?? []) as DueRow[];
+  const events = recentEvents ?? [];
+
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
-      <header style={{ marginBottom: 24 }}>
-        <h1 style={{ color: "var(--forest)", marginBottom: 0 }}>Ubulimi</h1>
-        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>
-          {farm?.name ?? "Your Farm"} &middot; Owner
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "28px 20px 48px" }}>
+      <header style={{ marginBottom: 20 }}>
+        <h1
+          style={{
+            color: "var(--forest)",
+            fontSize: 24,
+            fontWeight: 800,
+            letterSpacing: "-0.01em",
+            margin: 0,
+          }}
+        >
+          {farm?.name ?? "Your farm"}
+        </h1>
+        <p style={{ color: "var(--text-muted)", margin: "4px 0 0", fontSize: 14 }}>
+          Owner dashboard
         </p>
       </header>
 
-      <nav style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
-        <Link href="/log-event" style={navLink}>
-          Log event
-        </Link>
-        <Link href="/log-vaccination" style={navLink}>
-          Log vaccination
-        </Link>
-        <Link href="/log-feeding" style={navLink}>
-          Log feeding
-        </Link>
-        <Link href="/animals" style={navLink}>
-          Animals
-        </Link>
-        <Link href="/camps" style={navLink}>
-          Camps
-        </Link>
-        <Link href="/medicine" style={navLink}>
-          Medicine
-        </Link>
-        <Link href="/feed" style={navLink}>
-          Feed
-        </Link>
-        <Link href="/vaccination-types" style={navLink}>
-          Vaccination types
-        </Link>
-      </nav>
+      <Nav role="owner" />
 
-      <section style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+          gap: 12,
+          marginBottom: 28,
+        }}
+      >
         <StatCard label="Animals on farm" value={animalCount ?? 0} />
         <StatCard label="Open health events" value={openHealthCount ?? 0} />
-        <StatCard label="Low stock medicines" value={lowStockCount} />
-        <StatCard
-          label="Vaccinations due this week"
-          value={(vaccinationsDue ?? []).length}
-        />
+        <StatCard label="Low-stock medicines" value={lowStockCount} />
+        <StatCard label="Vaccinations due" value={due.length} />
       </section>
 
-      <section style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Vaccinations due</h2>
-        <VaccinationsDue rows={(vaccinationsDue ?? []) as DueRow[]} />
-      </section>
-
-      <section>
-        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Recent activity</h2>
-        {!recentEvents || recentEvents.length === 0 ? (
-          <p style={{ color: "var(--text-muted)" }}>Nothing logged yet.</p>
+      <div style={{ display: "grid", gap: 14 }}>
+        {due.length === 0 ? (
+          <Collapsible title="Vaccinations" count={0}>
+            <p style={{ color: "var(--text-muted)", margin: 0 }}>
+              Nothing due.
+            </p>
+          </Collapsible>
         ) : (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {recentEvents.map((e) => (
-              <li
-                key={e.id}
-                style={{
-                  border: "1px solid var(--card-border)",
-                  borderRadius: 8,
-                  padding: "10px 14px",
-                  marginBottom: 8,
-                }}
-              >
-                <strong>{(e.animals as { tag_id?: string } | null)?.tag_id ?? "Unknown animal"}</strong>
-                <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                  {(e.symptoms ?? []).join(", ") || e.notes}
-                </div>
-              </li>
-            ))}
-          </ul>
+          <VaccinationsDue rows={due} />
         )}
-      </section>
+
+        <Collapsible title="Recent activity" count={events.length}>
+          {events.length === 0 ? (
+            <p style={{ color: "var(--text-muted)", margin: 0 }}>
+              Nothing logged yet.
+            </p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {events.map((e) => (
+                <li
+                  key={e.id}
+                  style={{
+                    border: "1px solid var(--card-border)",
+                    borderRadius: 8,
+                    padding: "10px 14px",
+                    marginTop: 8,
+                    background: "#fff",
+                  }}
+                >
+                  <strong>
+                    {(e.animals as { tag_id?: string } | null)?.tag_id ??
+                      "Unknown animal"}
+                  </strong>
+                  <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                    {(e.symptoms ?? []).join(", ") || e.notes || "—"}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Collapsible>
+      </div>
     </main>
   );
 }
@@ -153,14 +155,20 @@ function StatCard({ label, value }: { label: string; value: number }) {
     <div
       style={{
         border: "1px solid var(--card-border)",
-        borderRadius: 8,
-        padding: 16,
-        flex: "1 1 160px",
-        background: "var(--light-bg)",
+        borderRadius: 12,
+        padding: "14px 16px",
+        background: "#fff",
+        boxShadow: "var(--card-shadow)",
       }}
     >
-      <div style={{ fontSize: 32, fontWeight: 700, color: "var(--terracotta)" }}>{value}</div>
-      <div style={{ color: "var(--text-dark)", fontSize: 13 }}>{label}</div>
+      <div
+        style={{ fontSize: 30, fontWeight: 800, color: "var(--terracotta)" }}
+      >
+        {value}
+      </div>
+      <div style={{ color: "var(--text-muted)", fontSize: 12.5, marginTop: 2 }}>
+        {label}
+      </div>
     </div>
   );
 }

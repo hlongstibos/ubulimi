@@ -19,6 +19,34 @@ export type Animal = {
 
 type Camp = { id: string; name: string };
 
+const DEFAULT_SPECIES = [
+  "Cattle",
+  "Goat",
+  "Sheep",
+  "Pig",
+  "Chicken",
+  "Horse",
+];
+const DEFAULT_BREEDS = [
+  "Boer",
+  "Kalahari Red",
+  "Savanna",
+  "Nguni",
+  "Bonsmara",
+  "Brahman",
+  "Afrikaner",
+  "Dorper",
+  "Meatmaster",
+  "Merino",
+  "Damara",
+];
+
+function merged(base: string[], extra: string[] = []): string[] {
+  return Array.from(new Set([...extra, ...base].filter(Boolean))).sort((a, b) =>
+    a.localeCompare(b)
+  );
+}
+
 const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: 13,
@@ -60,12 +88,18 @@ export default function AnimalForm({
   farmId,
   camps,
   animal,
+  speciesOptions = [],
+  breedOptions = [],
 }: {
   farmId: string;
   camps: Camp[];
   animal?: Animal;
+  speciesOptions?: string[];
+  breedOptions?: string[];
 }) {
   const editing = Boolean(animal);
+  const speciesList = merged(DEFAULT_SPECIES, speciesOptions);
+  const breedList = merged(DEFAULT_BREEDS, breedOptions);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -126,9 +160,10 @@ export default function AnimalForm({
       onSubmit={handleSubmit}
       style={{
         border: "1px solid var(--card-border)",
-        borderRadius: 8,
+        borderRadius: 12,
         padding: 16,
-        background: "var(--light-bg)",
+        background: "#fff",
+        boxShadow: "var(--card-shadow)",
       }}
     >
       <div
@@ -151,18 +186,31 @@ export default function AnimalForm({
           <input
             name="species"
             required
+            list="species-options"
             defaultValue={animal?.species ?? ""}
-            placeholder="e.g. Cattle, Goat, Sheep"
+            placeholder="Type or pick"
             style={fieldStyle}
           />
+          <datalist id="species-options">
+            {speciesList.map((s) => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
         </Field>
 
         <Field label="Breed">
           <input
             name="breed"
+            list="breed-options"
             defaultValue={animal?.breed ?? ""}
+            placeholder="Type or pick"
             style={fieldStyle}
           />
+          <datalist id="breed-options">
+            {breedList.map((b) => (
+              <option key={b} value={b} />
+            ))}
+          </datalist>
         </Field>
 
         <Field label="Date of birth">

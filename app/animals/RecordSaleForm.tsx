@@ -30,7 +30,13 @@ const fieldStyle: React.CSSProperties = {
   background: "#fff",
 };
 
-export default function RecordSaleForm({ animal }: { animal: SaleAnimal }) {
+export default function RecordSaleForm({
+  animal,
+  buyerOptions = [],
+}: {
+  animal: SaleAnimal;
+  buyerOptions?: string[];
+}) {
   const router = useRouter();
   const supabase = createClient();
   const [error, setError] = useState<string | null>(null);
@@ -160,7 +166,8 @@ export default function RecordSaleForm({ animal }: { animal: SaleAnimal }) {
         border: "1px solid var(--card-border)",
         borderRadius: 8,
         padding: 16,
-        background: "var(--light-bg)",
+        background: "#fff",
+        boxShadow: "var(--card-shadow)",
       }}
     >
       <div
@@ -172,7 +179,18 @@ export default function RecordSaleForm({ animal }: { animal: SaleAnimal }) {
       >
         <label style={{ display: "block" }}>
           <span style={labelStyle}>Buyer</span>
-          <input name="buyer" required style={fieldStyle} />
+          <input
+            name="buyer"
+            required
+            list="buyer-options"
+            placeholder="Type or pick"
+            style={fieldStyle}
+          />
+          <datalist id="buyer-options">
+            {buyerOptions.map((b) => (
+              <option key={b} value={b} />
+            ))}
+          </datalist>
         </label>
         <label style={{ display: "block" }}>
           <span style={labelStyle}>Price</span>

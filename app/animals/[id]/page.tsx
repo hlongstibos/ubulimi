@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import Collapsible from "@/app/ui/Collapsible";
 import AnimalForm, { type Animal } from "../AnimalForm";
 import AnimalTimeline from "../AnimalTimeline";
 import RecordSaleForm, { type SaleAnimal } from "../RecordSaleForm";
@@ -35,6 +36,8 @@ export default async function AnimalDetailPage({
     { data: vx },
     { data: sales },
     { data: farm },
+    { data: allForOptions },
+    { data: farmBuyers },
   ] = await Promise.all([
     supabase
       .from("animals")
@@ -76,6 +79,11 @@ export default async function AnimalDetailPage({
       .select("name")
       .eq("id", profile.farm_id)
       .single(),
+    supabase
+      .from("animals")
+      .select("species, breed")
+      .eq("farm_id", profile.farm_id),
+    supabase.from("sales").select("buyer").eq("farm_id", profile.farm_id),
   ]);
 
   if (!animal) notFound();
@@ -95,8 +103,19 @@ export default async function AnimalDetailPage({
       (v.vaccination_types as { name?: string } | null)?.name ?? null,
   }));
 
+  const animalSales = sales ?? [];
   const latestSale =
-    animal.status === "sold" && sales && sales.length > 0 ? sales[0] : null;
+    animal.status === "sold" && animalSales.length > 0 ? animalSales[0] : null;
+
+  const historyCount =
+    (he?.length ?? 0) + treatments.length + vaccinations.length;
+
+  const uniq = (xs: (string | null)[]) =>
+    Array.from(new Set(xs.filter((x): x is string => Boolean(x))));
+
+  const speciesOptions = uniq((allForOptions ?? []).map((a) => a.species));
+  const breedOptions = uniq((allForOptions ?? []).map((a) => a.breed));
+  const buyerOptions = uniq((farmBuyers ?? []).map((s) => s.buyer));
 
   const reportData: ReportData = {
     farmName: (farm as { name?: string } | null)?.name ?? null,
@@ -121,8 +140,8 @@ export default async function AnimalDetailPage({
   };
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
-      <header style={{ marginBottom: 24 }}>
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "28px 20px 48px" }}>
+      <header style={{ marginBottom: 20 }}>
         <Link
           href="/animals"
           style={{
@@ -133,10 +152,17 @@ export default async function AnimalDetailPage({
         >
           &larr; All animals
         </Link>
-        <h1 style={{ color: "var(--forest)", margin: "8px 0 0" }}>
+        <h1
+          style={{
+            color: "var(--forest)",
+            fontSize: 24,
+            fontWeight: 800,
+            margin: "8px 0 0",
+          }}
+        >
           {animal.tag_id}
         </h1>
-        <p style={{ color: "var(--text-muted)", marginTop: 4 }}>
+        <p style={{ color: "var(--text-muted)", margin: "4px 0 0" }}>
           {animal.species}
           {animal.breed ? ` · ${animal.breed}` : ""} · {animal.status}
         </p>
@@ -146,51 +172,60 @@ export default async function AnimalDetailPage({
         farmId={profile.farm_id}
         camps={camps ?? []}
         animal={animal as Animal}
+        speciesOptions={speciesOptions}
+        breedOptions={breedOptions}
       />
 
-      <section style={{ marginTop: 32 }}>
+      <section style={{ marginTop: 26 }}>
         <div
           style={{
             display: "flex",
-            alignItems: "baseline",
+            alignItems: "center",
             justifyContent: "space-between",
             gap: 16,
-            marginBottom: 12,
+            marginBottom: 10,
           }}
         >
           <h2 style={{ fontSize: 16, margin: 0 }}>History</h2>
           <DownloadReport data={reportData} />
         </div>
-        <AnimalTimeline
-          health={he ?? []}
-          treatments={treatments}
-          vaccinations={vaccinations}
-        />
+        <Collapsible title="Full history" count={historyCount}>
+          <AnimalTimeline
+            health={he ?? []}
+            treatments={treatments}
+            vaccinations={vaccinations}
+          />
+        </Collapsible>
       </section>
 
       {profile.role === "owner" && (
-        <section style={{ marginTop: 32 }}>
-          <h2 style={{ fontSize: 16, marginBottom: 12 }}>Sales</h2>
-          {sales && sales.length > 0 && (
-            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 16px" }}>
-              {sales.map((s) => (
+        <section style={{ marginTop: 26 }}>
+          <h2 style={{ fontSize: 16, marginBottom: 10 }}>Sales</h2>
+          {animalSales.length > 0 && (
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 14px" }}>
+              {animalSales.map((s) => (
                 <li
                   key={s.id}
                   style={{
                     border: "1px solid var(--card-border)",
-                    borderRadius: 8,
+                    borderRadius: 10,
                     padding: "10px 14px",
                     marginBottom: 8,
                     fontSize: 14,
+                    background: "#fff",
+                    boxShadow: "var(--card-shadow)",
                   }}
                 >
-                  <strong>{s.buyer ?? "—"}</strong> · {s.price ?? "—"} ·{" "}
+                  <strong>{s.buyer ?? "—"}</strong> · R {s.price ?? "—"} ·{" "}
                   {s.sale_date}
                 </li>
               ))}
             </ul>
           )}
-          <RecordSaleForm animal={animal as SaleAnimal} />
+          <RecordSaleForm
+            animal={animal as SaleAnimal}
+            buyerOptions={buyerOptions}
+          />
         </section>
       )}
     </main>

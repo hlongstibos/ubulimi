@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Collapsible from "./Collapsible";
 
 export type DueRow = {
   animal_id: string;
@@ -31,7 +32,11 @@ function describe(row: DueRow, today: number): { text: string; urgent: boolean }
 
 export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
   if (rows.length === 0) {
-    return <p style={{ color: "var(--text-muted)" }}>Nothing due.</p>;
+    return (
+      <p style={{ color: "var(--text-muted)", margin: 0 }}>
+        No vaccinations due.
+      </p>
+    );
   }
 
   const today = new Date();
@@ -39,34 +44,12 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
   const todayMs = today.getTime();
 
   return (
-    <details style={{ border: "1px solid var(--card-border)", borderRadius: 8 }}>
-      <summary
-        style={{
-          cursor: "pointer",
-          padding: "11px 14px",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          fontSize: 14,
-        }}
-      >
-        <span className="vd-caret" style={{ color: "var(--text-muted)" }}>
-          ▸
-        </span>
-        <strong style={{ color: "var(--terracotta)" }}>{rows.length}</strong>
-        <span>due &amp; overdue</span>
-        <span
-          style={{
-            marginLeft: "auto",
-            color: "var(--text-muted)",
-            fontSize: 12,
-          }}
-        >
-          tap to view
-        </span>
-      </summary>
-
-      <ul style={{ listStyle: "none", padding: "0 10px 10px", margin: 0 }}>
+    <Collapsible
+      title="Due & overdue vaccinations"
+      count={rows.length}
+      accent="var(--terracotta)"
+    >
+      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
         {rows.map((r, i) => {
           const { text, urgent } = describe(r, todayMs);
           return (
@@ -79,6 +62,7 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
                 }`,
                 borderRadius: 8,
                 marginTop: 8,
+                background: "#fff",
               }}
             >
               <Link
@@ -110,6 +94,6 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
           );
         })}
       </ul>
-    </details>
+    </Collapsible>
   );
 }
