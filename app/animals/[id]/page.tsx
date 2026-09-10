@@ -43,7 +43,7 @@ export default async function AnimalDetailPage({
     supabase
       .from("animals")
       .select(
-        "id, tag_id, species, breed, dob, sex, camp_id, status, last_mating_date, expected_birth_date"
+        "id, tag_id, species, breed, dob, sex, camp_id, status, last_mating_date, expected_birth_date, estimated_weight_kg"
       )
       .eq("id", id)
       .eq("farm_id", profile.farm_id)

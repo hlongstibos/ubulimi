@@ -15,6 +15,7 @@ export type Animal = {
   status: string;
   last_mating_date: string | null;
   expected_birth_date: string | null;
+  estimated_weight_kg: number | null;
 };
 
 type Camp = { id: string; name: string };
@@ -67,6 +68,13 @@ function pick(fd: FormData, key: string): string | null {
   const v = fd.get(key);
   const s = typeof v === "string" ? v.trim() : "";
   return s === "" ? null : s;
+}
+
+function numOrNull(fd: FormData, key: string): number | null {
+  const s = pick(fd, key);
+  if (s === null) return null;
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : null;
 }
 
 function Field({
@@ -125,6 +133,7 @@ export default function AnimalForm({
       camp_id: pick(fd, "camp_id"),
       last_mating_date: pick(fd, "last_mating_date"),
       expected_birth_date: pick(fd, "expected_birth_date"),
+      estimated_weight_kg: numOrNull(fd, "estimated_weight_kg"),
     };
 
     const { error } = editing
@@ -259,6 +268,17 @@ export default function AnimalForm({
             name="expected_birth_date"
             type="date"
             defaultValue={animal?.expected_birth_date ?? ""}
+            style={fieldStyle}
+          />
+        </Field>
+
+        <Field label="Estimated weight (kg)">
+          <input
+            name="estimated_weight_kg"
+            type="number"
+            step="any"
+            min="0"
+            defaultValue={animal?.estimated_weight_kg ?? ""}
             style={fieldStyle}
           />
         </Field>

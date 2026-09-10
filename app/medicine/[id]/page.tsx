@@ -26,7 +26,7 @@ export default async function MedicineDetailPage({
   const { data: medicine } = await supabase
     .from("medicine_inventory")
     .select(
-      "id, name, type, treats_conditions, stock_qty, unit, expiry_date, restock_threshold"
+      "id, name, type, treats_conditions, stock_qty, unit, expiry_date, restock_threshold, label_dosage_instructions, dose_per_kg, dose_unit"
     )
     .eq("id", id)
     .eq("farm_id", profile.farm_id)

@@ -14,6 +14,9 @@ export type Medicine = {
   unit: string;
   expiry_date: string | null;
   restock_threshold: number;
+  label_dosage_instructions: string | null;
+  dose_per_kg: number | null;
+  dose_unit: string | null;
 };
 
 export type MedicineCost = {
@@ -46,6 +49,13 @@ function pick(fd: FormData, key: string): string | null {
 function num(fd: FormData, key: string): number {
   const n = parseFloat(String(fd.get(key) ?? ""));
   return Number.isFinite(n) ? n : 0;
+}
+
+function numOrNull(fd: FormData, key: string): number | null {
+  const s = pick(fd, key);
+  if (s === null) return null;
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : null;
 }
 
 function Field({
@@ -105,6 +115,9 @@ export default function MedicineForm({
       unit: pick(fd, "unit") ?? "units",
       expiry_date: pick(fd, "expiry_date"),
       restock_threshold: num(fd, "restock_threshold"),
+      label_dosage_instructions: pick(fd, "label_dosage_instructions"),
+      dose_per_kg: numOrNull(fd, "dose_per_kg"),
+      dose_unit: pick(fd, "dose_unit"),
     };
 
     try {
@@ -259,6 +272,68 @@ export default function MedicineForm({
         Treatment doses are entered in ml and deducted from stock; if stock is in
         L it is reduced by the ml equivalent.
       </p>
+
+      <div
+        style={{
+          borderTop: "1px solid var(--card-border)",
+          marginTop: 18,
+          paddingTop: 14,
+        }}
+      >
+        <p
+          style={{
+            fontSize: 13,
+            color: "var(--text-muted)",
+            margin: "0 0 12px",
+          }}
+        >
+          Dosing from the label
+        </p>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+            gap: 14,
+          }}
+        >
+          <Field label="Dose per kg">
+            <input
+              name="dose_per_kg"
+              type="number"
+              step="any"
+              min="0"
+              defaultValue={medicine?.dose_per_kg ?? ""}
+              placeholder="only if the label gives one"
+              style={fieldStyle}
+            />
+          </Field>
+          <Field label="Dose unit">
+            <input
+              name="dose_unit"
+              list="dose-unit-options"
+              defaultValue={medicine?.dose_unit ?? ""}
+              placeholder="ml, mg, tablet…"
+              style={fieldStyle}
+            />
+            <datalist id="dose-unit-options">
+              {["ml", "mg", "g", "IU", "tablet", "sachet"].map((u) => (
+                <option key={u} value={u} />
+              ))}
+            </datalist>
+          </Field>
+        </div>
+        <div style={{ marginTop: 14 }}>
+          <Field label="Label dosage instructions">
+            <textarea
+              name="label_dosage_instructions"
+              rows={3}
+              defaultValue={medicine?.label_dosage_instructions ?? ""}
+              placeholder="Transcribe the exact wording from the product label"
+              style={{ ...fieldStyle, resize: "vertical" }}
+            />
+          </Field>
+        </div>
+      </div>
 
       <div style={{ marginTop: 14 }}>
         <Field label="Treats conditions">
