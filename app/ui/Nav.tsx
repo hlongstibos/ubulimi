@@ -9,6 +9,7 @@ const ITEMS: { href: string; label: string; ownerOnly?: boolean }[] = [
   { href: "/medicine", label: "Medicine" },
   { href: "/feed", label: "Feed" },
   { href: "/vaccination-types", label: "Vaccination types", ownerOnly: true },
+  { href: "/financials", label: "Financials", ownerOnly: true },
 ];
 
 export default function Nav({
