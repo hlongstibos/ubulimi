@@ -102,18 +102,27 @@ export default async function TodayPage() {
                   style={{
                     border: "1px solid var(--card-border)",
                     borderRadius: 8,
-                    padding: "10px 14px",
                     marginTop: 8,
                     background: "#fff",
                   }}
                 >
-                  <strong>
-                    {(e.animals as { tag_id?: string } | null)?.tag_id ??
-                      "Unknown animal"}
-                  </strong>
-                  <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                    {(e.symptoms ?? []).join(", ") || e.notes || "—"}
-                  </div>
+                  <Link
+                    href={`/health-events/${e.id}`}
+                    style={{
+                      display: "block",
+                      padding: "10px 14px",
+                      color: "inherit",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <strong>
+                      {(e.animals as { tag_id?: string } | null)?.tag_id ??
+                        "Unknown animal"}
+                    </strong>
+                    <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                      {(e.symptoms ?? []).join(", ") || e.notes || "—"}
+                    </div>
+                  </Link>
                 </li>
               ))}
             </ul>

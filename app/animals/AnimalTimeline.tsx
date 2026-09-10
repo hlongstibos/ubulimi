@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Health = {
   id: string;
   symptoms: string[];
@@ -66,24 +68,16 @@ export default function AnimalTimeline({
 
   return (
     <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-      {items.map((it) => (
-        <li
-          key={`${it.kind}-${it.id}`}
-          style={{
-            border: "1px solid var(--card-border)",
-            borderLeft: `3px solid ${COLORS[it.kind]}`,
-            borderRadius: 8,
-            padding: "10px 14px",
-            marginBottom: 8,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: 12,
-            }}
-          >
+      {items.map((it) => {
+        const body = (
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12,
+              }}
+            >
             <strong
               style={{
                 fontSize: 12,
@@ -134,8 +128,37 @@ export default function AnimalTimeline({
               </>
             )}
           </div>
-        </li>
-      ))}
+          </>
+        );
+
+        return (
+          <li
+            key={`${it.kind}-${it.id}`}
+            style={{
+              border: "1px solid var(--card-border)",
+              borderLeft: `3px solid ${COLORS[it.kind]}`,
+              borderRadius: 8,
+              marginBottom: 8,
+            }}
+          >
+            {it.kind === "health" ? (
+              <Link
+                href={`/health-events/${it.id}`}
+                style={{
+                  display: "block",
+                  padding: "10px 14px",
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
+                {body}
+              </Link>
+            ) : (
+              <div style={{ padding: "10px 14px" }}>{body}</div>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

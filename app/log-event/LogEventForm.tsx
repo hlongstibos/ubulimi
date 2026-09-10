@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import TagInput from "@/app/ui/TagInput";
+import DosageGuidance from "@/app/ui/DosageGuidance";
 
 type Animal = {
   id: string;
@@ -365,7 +365,14 @@ export default function LogEventForm({
                       </button>
                     </div>
 
-                    <DosageGuidance s={s} animal={selectedAnimal} />
+                    <DosageGuidance
+                      medicineId={s.id}
+                      dosePerKg={s.dose_per_kg}
+                      doseUnit={s.dose_unit}
+                      labelText={s.label_dosage_instructions}
+                      weightKg={selectedAnimal?.estimated_weight_kg ?? null}
+                      animalId={selectedAnimal?.id ?? null}
+                    />
 
                     {chosen && treatment && (
                       <div style={{ marginTop: 12 }}>
@@ -446,130 +453,3 @@ export default function LogEventForm({
   );
 }
 
-function fmt(n: number): string {
-  return n.toLocaleString("en-ZA", { maximumFractionDigits: 2 });
-}
-
-function DosageGuidance({
-  s,
-  animal,
-}: {
-  s: Suggestion;
-  animal: Animal | null;
-}) {
-  const weight = animal?.estimated_weight_kg ?? null;
-  const hasLabelDose =
-    s.dose_per_kg != null && s.dose_unit != null && s.dose_unit !== "";
-  const calc = hasLabelDose && weight != null ? s.dose_per_kg! * weight : null;
-
-  const noteStyle: React.CSSProperties = {
-    margin: "0 0 4px",
-    fontSize: 12,
-    color: "var(--text-muted)",
-  };
-  const linkStyle: React.CSSProperties = {
-    color: "var(--forest)",
-    fontWeight: 600,
-  };
-
-  return (
-    <div style={{ marginTop: 10, fontSize: 13 }}>
-      {calc != null ? (
-        <p
-          style={{ margin: "0 0 4px", fontWeight: 700, color: "var(--forest)" }}
-        >
-          Suggested: {fmt(calc)} {s.dose_unit}{" "}
-          <span style={{ fontWeight: 400, color: "var(--text-muted)" }}>
-            (from label &times; this animal&rsquo;s estimated weight)
-          </span>
-        </p>
-      ) : (
-        <p style={noteStyle}>
-          No calculated dose &mdash;{" "}
-          {!hasLabelDose && weight == null ? (
-            <>
-              add this medicine&rsquo;s per-kg dose &amp; unit on the{" "}
-              <Link href={`/medicine/${s.id}`} style={linkStyle}>
-                medicine page
-              </Link>
-              , and set the animal&rsquo;s estimated weight on its{" "}
-              {animal ? (
-                <Link href={`/animals/${animal.id}`} style={linkStyle}>
-                  detail page
-                </Link>
-              ) : (
-                "detail page"
-              )}
-              .
-            </>
-          ) : !hasLabelDose ? (
-            <>
-              add this medicine&rsquo;s per-kg dose &amp; unit on the{" "}
-              <Link href={`/medicine/${s.id}`} style={linkStyle}>
-                medicine page
-              </Link>
-              .
-            </>
-          ) : (
-            <>
-              set this animal&rsquo;s estimated weight on its{" "}
-              {animal ? (
-                <Link href={`/animals/${animal.id}`} style={linkStyle}>
-                  detail page
-                </Link>
-              ) : (
-                "detail page"
-              )}
-              .
-            </>
-          )}
-        </p>
-      )}
-
-      {s.label_dosage_instructions ? (
-        <p
-          style={{
-            margin: "0 0 4px",
-            padding: "6px 10px",
-            background: "var(--light-bg)",
-            border: "1px solid var(--card-border)",
-            borderRadius: 6,
-            whiteSpace: "pre-wrap",
-            color: "var(--text-dark)",
-          }}
-        >
-          <span
-            style={{
-              display: "block",
-              fontSize: 11,
-              color: "var(--text-muted)",
-            }}
-          >
-            From the label
-          </span>
-          {s.label_dosage_instructions}
-        </p>
-      ) : (
-        <p style={noteStyle}>
-          No label dosage instructions on file &mdash; add them on the{" "}
-          <Link href={`/medicine/${s.id}`} style={linkStyle}>
-            medicine page
-          </Link>
-          .
-        </p>
-      )}
-
-      <p
-        style={{
-          margin: 0,
-          color: "var(--terracotta)",
-          fontWeight: 600,
-          fontSize: 12,
-        }}
-      >
-        Reference only &mdash; confirm with a vet or animal health technician
-        before administering.
-      </p>
-    </div>
-  );
-}
