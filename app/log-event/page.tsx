@@ -32,7 +32,7 @@ export default async function LogEventPage() {
 
   const { data: animals } = await supabase
     .from("animals")
-    .select("id, tag_id, species")
+    .select("id, tag_id, species, estimated_weight_kg")
     .eq("farm_id", profile.farm_id)
     .neq("status", "sold")
     .order("tag_id");
