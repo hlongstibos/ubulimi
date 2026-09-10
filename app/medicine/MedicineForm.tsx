@@ -280,14 +280,21 @@ export default function MedicineForm({
           paddingTop: 14,
         }}
       >
+        <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 4px" }}>
+          Dosing — copy from the label
+        </p>
         <p
           style={{
-            fontSize: 13,
+            fontSize: 12,
             color: "var(--text-muted)",
             margin: "0 0 12px",
+            lineHeight: 1.5,
           }}
         >
-          Dosing from the label
+          Transcribe these fields word-for-word from the physical product label
+          or the package insert. This is a reference record of what the
+          manufacturer states &mdash; do not estimate, round, or fill them from
+          memory. Leave a field blank if the label doesn&rsquo;t give it.
         </p>
         <div
           style={{
@@ -296,23 +303,23 @@ export default function MedicineForm({
             gap: 14,
           }}
         >
-          <Field label="Dose per kg">
+          <Field label="Dose per kg (as printed)">
             <input
               name="dose_per_kg"
               type="number"
               step="any"
               min="0"
               defaultValue={medicine?.dose_per_kg ?? ""}
-              placeholder="only if the label gives one"
+              placeholder="blank if not stated on the label"
               style={fieldStyle}
             />
           </Field>
-          <Field label="Dose unit">
+          <Field label="Dose unit (as printed)">
             <input
               name="dose_unit"
               list="dose-unit-options"
               defaultValue={medicine?.dose_unit ?? ""}
-              placeholder="ml, mg, tablet…"
+              placeholder="e.g. ml, mg, tablet"
               style={fieldStyle}
             />
             <datalist id="dose-unit-options">
@@ -323,12 +330,12 @@ export default function MedicineForm({
           </Field>
         </div>
         <div style={{ marginTop: 14 }}>
-          <Field label="Label dosage instructions">
+          <Field label="Label dosage instructions (verbatim)">
             <textarea
               name="label_dosage_instructions"
               rows={3}
               defaultValue={medicine?.label_dosage_instructions ?? ""}
-              placeholder="Transcribe the exact wording from the product label"
+              placeholder="Type the dosing text exactly as it appears on the label / insert"
               style={{ ...fieldStyle, resize: "vertical" }}
             />
           </Field>
