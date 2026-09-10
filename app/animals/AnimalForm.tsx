@@ -272,13 +272,14 @@ export default function AnimalForm({
           />
         </Field>
 
-        <Field label="Estimated weight (kg)">
+        <Field label="Estimated weight (kg) — your estimate">
           <input
             name="estimated_weight_kg"
             type="number"
             step="any"
             min="0"
             defaultValue={animal?.estimated_weight_kg ?? ""}
+            placeholder="your best estimate, in kg"
             style={fieldStyle}
           />
         </Field>
@@ -298,6 +299,19 @@ export default function AnimalForm({
           </Field>
         )}
       </div>
+
+      <p
+        style={{
+          fontSize: 12,
+          color: "var(--text-muted)",
+          margin: "10px 0 0",
+          lineHeight: 1.5,
+        }}
+      >
+        Estimated weight is a figure <strong>you</strong> set and update by hand
+        &mdash; after a weigh, a condition score, or a rough eye estimate. V1
+        keeps only the latest value; it does not track weight over time.
+      </p>
 
       {error && (
         <p style={{ color: "#b3413e", fontSize: 13, marginBottom: 0 }}>{error}</p>

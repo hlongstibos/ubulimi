@@ -166,6 +166,9 @@ export default async function AnimalDetailPage({
         <p style={{ color: "var(--text-muted)", margin: "4px 0 0" }}>
           {animal.species}
           {animal.breed ? ` · ${animal.breed}` : ""} · {animal.status}
+          {animal.estimated_weight_kg != null
+            ? ` · ~${animal.estimated_weight_kg} kg (est.)`
+            : ""}
         </p>
       </header>
 
