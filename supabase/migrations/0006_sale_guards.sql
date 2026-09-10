@@ -62,7 +62,7 @@ declare
   v_farm_id uuid := public.current_farm_id();
   v_animal_id uuid;
 begin
-  if public.current_role() <> 'owner' then
+  if public.current_role() is distinct from 'owner' then
     raise exception 'Only an owner can remove a sale.';
   end if;
 
