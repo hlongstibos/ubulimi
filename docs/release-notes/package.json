@@ -1,0 +1,14 @@
+{
+  "name": "ubulimi-release-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generator for the Ubulimi V1 release-notes .docx",
+  "type": "commonjs",
+  "scripts": {
+    "build": "node gen.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "docx": "^9.7.1"
+  }
+}
