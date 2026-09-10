@@ -5,6 +5,7 @@ import Collapsible from "@/app/ui/Collapsible";
 import AnimalForm, { type Animal } from "../AnimalForm";
 import AnimalTimeline from "../AnimalTimeline";
 import RecordSaleForm, { type SaleAnimal } from "../RecordSaleForm";
+import VoidSaleButton from "../VoidSaleButton";
 import DownloadReport from "../DownloadReport";
 import type { ReportData } from "../animalReport";
 
@@ -201,6 +202,7 @@ export default async function AnimalDetailPage({
       {profile.role === "owner" && (
         <section style={{ marginTop: 26 }}>
           <h2 style={{ fontSize: 16, marginBottom: 10 }}>Sales</h2>
+
           {animalSales.length > 0 && (
             <ul style={{ listStyle: "none", padding: 0, margin: "0 0 14px" }}>
               {animalSales.map((s) => (
@@ -214,18 +216,59 @@ export default async function AnimalDetailPage({
                     fontSize: 14,
                     background: "#fff",
                     boxShadow: "var(--card-shadow)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    flexWrap: "wrap",
                   }}
                 >
-                  <strong>{s.buyer ?? "—"}</strong> · R {s.price ?? "—"} ·{" "}
-                  {s.sale_date}
+                  <span>
+                    <strong>{s.buyer ?? "—"}</strong> · R {s.price ?? "—"} ·{" "}
+                    {s.sale_date}
+                  </span>
+                  <VoidSaleButton saleId={s.id} />
                 </li>
               ))}
             </ul>
           )}
-          <RecordSaleForm
-            animal={animal as SaleAnimal}
-            buyerOptions={buyerOptions}
-          />
+
+          {animalSales.length > 0 ? (
+            <p
+              style={{
+                fontSize: 13,
+                color: "var(--text-muted)",
+                margin: 0,
+              }}
+            >
+              This animal is sold — one sale per animal. If it was recorded on
+              the wrong animal, use <strong>Remove</strong> above; that puts it
+              back to active so you can record the sale on the right one.
+            </p>
+          ) : animal.status === "active" ? (
+            <RecordSaleForm
+              animal={animal as SaleAnimal}
+              buyerOptions={buyerOptions}
+            />
+          ) : (
+            <p
+              style={{
+                fontSize: 13,
+                color: "var(--text-muted)",
+                border: "1px solid var(--card-border)",
+                borderLeft: "3px solid var(--terracotta)",
+                borderRadius: 8,
+                padding: "10px 14px",
+                margin: 0,
+                background: "#fff",
+              }}
+            >
+              This animal is marked <strong>{animal.status}</strong>. A sale can
+              only be recorded for an active animal — if the status was set by
+              mistake, change it back to <strong>Active</strong> in the form
+              above.
+            </p>
+          )}
         </section>
       )}
     </main>
