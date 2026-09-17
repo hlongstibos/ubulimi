@@ -14,11 +14,11 @@ import {
 const C = {
   forest: "#2c5f2d",
   terracotta: "#c97b2e",
-  border: "#dce5d6",
-  headFill: "#f4f7f1",
+  border: "#e3e1db",
+  headFill: "#f7f6f3",
   saleFill: "#faf3ec",
-  muted: "#6b7566",
-  dark: "#26301f",
+  muted: "#78766f",
+  dark: "#2a2a27",
 };
 
 export type ReportData = {

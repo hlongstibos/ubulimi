@@ -1,12 +1,17 @@
 :root {
+  /* Accent — kept vivid; everything else below is neutral so this is
+     the only thing meant to pop. */
   --forest: #2c5f2d;
   --moss: #7fa65a;
   --terracotta: #c97b2e;
-  --light-bg: #f4f7f1;
-  --card-border: #dce5d6;
-  --text-dark: #26301f;
-  --text-muted: #6b7566;
-  --card-shadow: 0 1px 2px rgba(38, 48, 31, 0.05);
+
+  /* Soft neutral base — warm stone/gray, no green tint, so the accent
+     colours above read as deliberate rather than blending into the UI. */
+  --light-bg: #f7f6f3;
+  --card-border: #e3e1db;
+  --text-dark: #2a2a27;
+  --text-muted: #78766f;
+  --card-shadow: 0 1px 2px rgba(42, 42, 39, 0.06);
 }
 
 * {
@@ -37,7 +42,7 @@ button {
 
 input::placeholder,
 textarea::placeholder {
-  color: #9aa392;
+  color: #a8a69f;
 }
 
 button {
@@ -65,7 +70,7 @@ table {
   border-collapse: collapse;
 }
 tbody tr:hover {
-  background: rgba(127, 166, 90, 0.07);
+  background: rgba(42, 42, 39, 0.035);
 }
 
 /* Collapsible sections (<details>): drop the native marker, use our own caret. */
@@ -76,7 +81,7 @@ summary::-webkit-details-marker {
   display: none;
 }
 summary:hover {
-  background: rgba(38, 48, 31, 0.03);
+  background: rgba(42, 42, 39, 0.04);
 }
 .vd-caret {
   display: inline-block;
