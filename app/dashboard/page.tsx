@@ -104,28 +104,24 @@ export default async function DashboardPage() {
         <StatCard
           label="Open health events"
           value={openHealthCount ?? 0}
-          sectionId="recent-activity"
+          href="/health-events"
         />
         <StatCard label="Low-stock medicines" value={lowStockCount} href="/medicine" />
-        <StatCard
-          label="Vaccinations due"
-          value={due.length}
-          sectionId="vaccinations-due"
-        />
+        <StatCard label="Vaccinations due" value={due.length} href="/vaccinations" />
       </section>
 
       <div style={{ display: "grid", gap: 14 }}>
         {due.length === 0 ? (
-          <Collapsible id="vaccinations-due" title="Vaccinations" count={0}>
+          <Collapsible title="Vaccinations" count={0}>
             <p style={{ color: "var(--text-muted)", margin: 0 }}>
               Nothing due.
             </p>
           </Collapsible>
         ) : (
-          <VaccinationsDue id="vaccinations-due" rows={due} />
+          <VaccinationsDue rows={due} />
         )}
 
-        <Collapsible id="recent-activity" title="Recent activity" count={events.length}>
+        <Collapsible title="Recent activity" count={events.length}>
           {events.length === 0 ? (
             <p style={{ color: "var(--text-muted)", margin: 0 }}>
               Nothing logged yet.

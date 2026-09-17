@@ -23,6 +23,8 @@ const GROUPS: Group[] = [
     items: [
       { href: "/animals", label: "Animals" },
       { href: "/camps", label: "Camps" },
+      { href: "/health-events", label: "Health events" },
+      { href: "/vaccinations", label: "Vaccinations" },
     ],
   },
   {
