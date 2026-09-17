@@ -100,7 +100,7 @@ children.push(
   new Paragraph({
     alignment: AlignmentType.CENTER,
     spacing: { after: 200 },
-    children: [new TextRun({ text: "V1 + follow-ups · 10 September 2026 · main @ 4e05204", size: 18, color: MUTED })],
+    children: [new TextRun({ text: "V1 + follow-ups · 17 September 2026 · main @ 858a6d0", size: 18, color: MUTED })],
   }),
   rule()
 );
@@ -117,7 +117,7 @@ children.push(
   p("Ubulimi is a web application that helps South African smallholder farmers keep records for a livestock operation: the animals on the farm, the medicine and feed in the store, the health events and treatments, the vaccination schedule, feeding by camp, and animal sales. It is built for two roles on a single farm — an owner, who sees the full picture and the money, and a worker, who is given a focused daily task list.")
 );
 children.push(
-  p("V1 delivers the first working version of every core record-keeping area — nine build increments on top of the starter project (authentication, the database schema, and the two role-based landing pages already existed). Follow-up work since then — a Financials report, sale-integrity guards, grouped navigation, millilitre-based treatment dosing, label dosage reference data, and a health-event detail page — is described in sections 3.9 to 3.11; this document has been updated to include it.")
+  p("V1 delivers the first working version of every core record-keeping area — nine build increments on top of the starter project (authentication, the database schema, and the two role-based landing pages already existed). Follow-up work since then — a Financials report, sale-integrity guards, grouped navigation, millilitre-based treatment dosing, label dosage reference data, a health-event detail page, dedicated Health events and Vaccinations pages, a single-Menu nav, a Soft Neutral + Accent visual refresh, and a security hardening pass — is described in sections 3.9 to 3.13; this document has been updated to include it.")
 );
 children.push(h2("Technology"));
 children.push(bullet([t("Frontend / server: ", { bold: true }), t("Next.js 16.3.4 (App Router), React 19, TypeScript. Plain CSS with a fixed colour palette — no UI component library. @react-pdf/renderer for the client-side PDF reports (animal history, financials).")]));
@@ -133,12 +133,12 @@ children.push(
     [
       [{ text: "Item", w: 2500 }, { text: "Detail", w: 6520 }],
       [{ text: "Version", w: 2500 }, { text: "V1 — Phase 1 feature-complete (offline support excepted)", w: 6520 }],
-      [{ text: "Release date", w: 2500 }, { text: "9 September 2026 (this document updated 10 September)", w: 6520 }],
-      [{ text: "Repository", w: 2500 }, { text: "github.com/hlongstibos/ubulimi (branch main, tip 4e05204)", w: 6520 }],
+      [{ text: "Release date", w: 2500 }, { text: "9 September 2026 (this document last updated 17 September)", w: 6520 }],
+      [{ text: "Repository", w: 2500 }, { text: "github.com/hlongstibos/ubulimi (branch main, tip 858a6d0)", w: 6520 }],
       [{ text: "Production URL", w: 2500 }, { text: "https://ubulimi.vercel.app (live, HTTP 200; auto-deploys on push)", w: 6520 }],
-      [{ text: "Commits", w: 2500 }, { text: "30 (9ab30fa … 4e05204) — 9 for V1, 21 follow-ups", w: 6520 }],
-      [{ text: "DB migrations", w: 2500 }, { text: "0002 – 0008 — all applied to the live database (checked by API probe)", w: 6520 }],
-      [{ text: "Routes", w: 2500 }, { text: "18 (see section 4)", w: 6520 }],
+      [{ text: "Commits", w: 2500 }, { text: "39 (9ab30fa … 858a6d0) — 9 for V1, 30 follow-ups", w: 6520 }],
+      [{ text: "DB migrations", w: 2500 }, { text: "0002 – 0009 — all applied to the live database (checked live: API probe for 0002-0008, a full functional re-test of every RPC for 0009)", w: 6520 }],
+      [{ text: "Routes", w: 2500 }, { text: "20 (see section 4)", w: 6520 }],
       [{ text: "Build status", w: 2500 }, { text: "npm run build passes; all routes compile; TypeScript clean", w: 6520 }],
     ]
   )
@@ -213,6 +213,18 @@ children.push(bullet([t("Label dosage reference data. ", { bold: true }), t("Mig
 children.push(bullet([t("Dosage guidance on medicine suggestions. ", { bold: true }), t("On every /log-event suggestion card: when the medicine has dose_per_kg + dose_unit and the animal has an estimated weight, a calculated line — “Suggested: {dose_per_kg × weight} {dose_unit} (from label × this animal’s estimated weight)”. The verbatim label instructions are always shown underneath so the number can be checked; if a value is missing the calculation is skipped and the missing field is prompted for (with a link). In every case a persistent, non-dismissible line: “Reference only — confirm with a vet or animal health technician before administering.”")]));
 children.push(bullet([t("Health-event detail page (/health-events/[id]). ", { bold: true }), t("Clicking a health event — from the Recent activity list on the dashboard / today view, or a Health event row in the animal history timeline — opens a page showing its symptoms, notes and status (Open / “Open · being treated” when a treatment exists / Resolved) with a Mark resolved / Reopen toggle, the animal linked, the list of treatments recorded against it, and a Record a treatment form (medicine picker + the same dosage guidance + dose in ml) so a treatment can be added after the event is first logged.")]));
 
+children.push(h2("3.12  Navigation, revisited"));
+children.push(bullet([t("Single Menu button. ", { bold: true }), t("The four dropdown pills described in 3.10 (Log / Herd / Stock / Setup) plus the Financials pill are gone — replaced with one “☰ Menu” button on the left, under the farm name, on the dashboard, today and financials pages. Clicking it opens a single panel with every section stacked (grouped by heading) instead of several controls competing for space.")]));
+children.push(bullet([t("A consistent “← Back” everywhere. ", { bold: true }), t("Getting back to the dashboard used to only reliably work by clicking the UBULIMI header badge. Every top-level list page (Animals, Medicine, Feed, Health events, Vaccinations, Vaccination types) now also carries the same small “← Back” link already used on the three log-* pages — role-aware (owner → /dashboard, worker → /today) — positioned the same way, above the title. Detail pages already had an equivalent “← [parent]” link; the chain from any page now reaches the dashboard in one consistent style.")]));
+children.push(bullet([t("Dashboard KPI cards are now links. ", { bold: true }), t("Animals on farm → /animals and Low-stock medicines → /medicine (real navigation). Open health events → the new /health-events list (below). Vaccinations due → the new /vaccinations page (below). The dashboard’s own “Due & overdue vaccinations” and “Recent activity” collapsibles are unchanged, kept as quick access on the dashboard itself.")]));
+children.push(bullet([t("Health events (/health-events). ", { bold: true }), t("A full list of every health event on the farm, filterable Open / Resolved / All with live counts, each row showing the animal, symptom chips, status (Open / “Open · being treated” / Resolved), notes and date, linking to the existing /health-events/[id] detail page.")]));
+children.push(bullet([t("Vaccinations (/vaccinations). ", { bold: true }), t("The full due & overdue list as a standalone page (not just the dashboard’s collapsed preview), with a “Set up vaccination types” button top-right, linking to /vaccination-types — shown only for owners.")]));
+children.push(h2("3.13  Visual refresh and a security hardening pass"));
+children.push(bullet([t("Soft Neutral + Accent palette. ", { bold: true }), t("The background, card borders and text were all lightly green-tinted, which muddied the two accent colours (forest, terracotta) into the rest of the UI. Neutralised the base to warm stone/gray — background, borders, muted/dark text, the card shadow, placeholder text, table/summary hover washes — while leaving the accent colours untouched, so they now read as deliberate against a calmer backdrop. The two @react-pdf/renderer report generators (animal history, financials), which hardcode their own palette since they can’t read CSS variables, were updated to match so a downloaded report looks consistent with the app.")]));
+children.push(bullet([t("Header wordmark. ", { bold: true }), t("Superseding the plain sticky-header text described in 3.9: UBULIMI is now a solid forest-green rounded badge with a subtle drop shadow, popping off the header instead of needing to visually match the Log out pill next to it.")]));
+children.push(bullet([t("Fixed a stuck “Logging out…” state. ", { bold: true }), t("AppHeader lives in the root layout and never truly unmounts — it renders null on /login and /, but the component instance (and its state) persists underneath. The logging-out flag was never reset on success, so after one logout the button would come back reading “Logging out…” (and stay disabled) the next time someone signed back in, even though nothing was in flight. Wrapped the logout call in try/finally so the flag always resets.")]));
+children.push(bullet([t("Security audit. ", { bold: true }), t("next.config.mjs had no response headers at all — added a Content-Security-Policy (default-src 'self', an explicit https://*.supabase.co connect-src allowlist, frame-ancestors 'none', object-src 'none'), X-Frame-Options, X-Content-Type-Options, Referrer-Policy, a locked-down Permissions-Policy, HSTS, and disabled X-Powered-By. Migration 0009 pins search_path = '' on all 8 SECURITY DEFINER functions, closing a gap Supabase’s own linter flags (safe here — every function already fully schema-qualifies its own references). Dependencies bumped within existing package.json ranges (Next, React/React-DOM + types); npm audit: 0 vulnerabilities before and after. Also reviewed and confirmed already sound: no secrets anywhere in git history, every table has RLS, every owner-only route redirects server-side (not just hidden in the UI), no custom API surface to secure or rate-limit, no dangerouslySetInnerHTML/eval/raw-SQL anywhere, and password storage is entirely Supabase Auth’s responsibility.")]));
+
 // 4. Routes
 children.push(h1("4. Routes"));
 const R = (r, a, pp) => [
@@ -230,7 +242,9 @@ children.push(
       R("/animals", "Both", "Animal list (status filter) + add form"),
       R("/animals/[id]", "Both", "Edit animal + estimated weight; collapsible history (event rows linked); Download Report PDF; Sales with Record / Remove (owner)"),
       R("/financials", "Owner", "Net position, KPI tiles, breakdowns, Download PDF"),
+      R("/health-events", "Both", "Filterable list (Open / Resolved / All) with counts"),
       R("/health-events/[id]", "Both", "Event symptoms / notes / status, treatments given, record a treatment"),
+      R("/vaccinations", "Both", "Full due & overdue list; Set up vaccination types (owner)"),
       R("/camps", "Both", "Camp list + add"),
       R("/medicine", "Both", "Inventory first; collapsible add form (cost fields owner-only)"),
       R("/medicine/[id]", "Both", "Edit medicine (cost/supplier owner-only)"),
@@ -247,7 +261,7 @@ children.push(
 
 // 5. Database changes
 children.push(h1("5. Database changes"));
-children.push(p("Seven migrations are new since the base schema. They must be run once in the Supabase SQL Editor, in order. Migration 0001 (the base schema) was already applied. All seven below have been confirmed live in the project database (checked by API probe)."));
+children.push(p("Eight migrations are new since the base schema. They must be run once in the Supabase SQL Editor, in order. Migration 0001 (the base schema) was already applied. All eight below have been confirmed live in the project database."));
 children.push(
   table(
     [2700, 6320],
@@ -281,6 +295,10 @@ children.push(
         { text: "0008_medicine_dosage_fields.sql", w: 2700, mono: true },
         { text: "Additive, nullable: medicine_inventory.label_dosage_instructions (text), dose_per_kg (numeric), dose_unit (text); animals.estimated_weight_kg (numeric). No functions or existing data change.", w: 6320 },
       ],
+      [
+        { text: "0009_pin_search_path.sql", w: 2700, mono: true },
+        { text: "Security hardening: pins search_path = '' on all 8 SECURITY DEFINER functions (current_farm_id, current_role, log_audit_event, administer_treatment, administer_vaccination, log_feeding_event, record_sale, void_sale) — closes a search-path-hijacking gap. Configuration-only; no signature or behaviour change.", w: 6320 },
+      ],
     ]
   )
 );
@@ -308,6 +326,8 @@ children.push(bullet([t("Owner-only at the database: "), code("sales"), t(", "),
 children.push(bullet([t("Owner-only in the UI, with RLS as the backstop: the "), code("/dashboard"), t(", "), code("/vaccination-types"), t(" and "), code("/financials"), t(" routes redirect workers; medicine cost/supplier fields are not rendered or fetched for workers; the Record Sale form and the Financials nav item are not rendered for workers.")]));
 children.push(bullet("No self-service registration; farms and their owner/worker profiles are created by an administrator."));
 children.push(bullet([t("Supabase credentials are the publishable key only (safe for the browser); no service-role key is used in the app. They are supplied as "), code("NEXT_PUBLIC_SUPABASE_URL"), t(" and "), code("NEXT_PUBLIC_SUPABASE_ANON_KEY"), t(".")]));
+children.push(bullet([t("Response headers ("), code("next.config.mjs"), t("): Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, a locked-down Permissions-Policy, and HSTS; the framework's X-Powered-By header is suppressed.")]));
+children.push(bullet([t("Every "), code("SECURITY DEFINER"), t(" function pins "), code("search_path = ''"), t(" (migration 0009), closing the search-path-hijacking gap Supabase's own linter flags for definer functions.")]));
 
 // 8. Known limitations
 children.push(h1("8. Known limitations and deferred work"));
@@ -326,7 +346,7 @@ children.push(bullet([code("middleware.ts"), t(" uses the file convention Next.j
 
 // 9. Deployment
 children.push(h1("9. Deployment and operator checklist"));
-children.push(bullet([t("1.  Apply migrations "), code("0002"), t(" through "), code("0008"), t(" in the Supabase SQL Editor, in order. Run 0007 together with the matching frontend deploy — it changes the administer_treatment signature.  "), t("[done — all seven confirmed live]", { color: FOREST })]));
+children.push(bullet([t("1.  Apply migrations "), code("0002"), t(" through "), code("0009"), t(" in the Supabase SQL Editor, in order. Run 0007 together with the matching frontend deploy — it changes the administer_treatment signature. 0009 is configuration-only (no deploy-ordering concern).  "), t("[done — all eight confirmed live]", { color: FOREST })]));
 children.push(bullet([t("2.  Set "), code("NEXT_PUBLIC_SUPABASE_URL"), t(" and "), code("NEXT_PUBLIC_SUPABASE_ANON_KEY"), t(" in the Vercel project (all environments).  "), t("[done]", { color: FOREST })]));
 children.push(bullet("3.  Provision each pilot farm by hand: create the owner and worker auth users (Auto Confirm on), then insert the farms row and the two profiles rows linking those users to it with roles owner and worker (README, step 5)."));
 children.push(bullet([t("4.  Optional — demo mode: create dedicated demo auth users, and set "), code("NEXT_PUBLIC_DEMO_OWNER_EMAIL / _PASSWORD"), t(" and "), code("NEXT_PUBLIC_DEMO_WORKER_EMAIL / _PASSWORD"), t(" in Vercel to show the one-tap Owner / Worker buttons on the login screen. Point them at throwaway accounts — NEXT_PUBLIC values are readable in the browser bundle.")]));
@@ -341,7 +361,16 @@ children.push(
     [1400, 7620],
     [
       [{ text: "Commit", w: 1400 }, { text: "Summary", w: 7620 }],
-      C("4e05204", "Collapse the add-stock form on /medicine and /feed behind an “Add” disclosure; show the inventory first (open by default only when empty)"),
+      C("929ef71", "Collapse the nav into a single Menu trigger under the farm name"),
+      C("2e44c8e", "Make the dashboard KPI cards clickable"),
+      C("8ef8877", "Give Open health events and Vaccinations due their own pages"),
+      C("a7e1355", "Fix stuck \u201cLogging out...\u201d state; enlarge the header wordmark"),
+      C("8d69216", "Restyle the header wordmark as a watermark"),
+      C("fe03381", "Turn the header wordmark into a solid boxed badge"),
+      C("5492280", "Move the palette to Soft Neutral + Accent"),
+      C("952f600", "Add a consistent \u201c\u2190 Back\u201d link to every top-level page"),
+      C("858a6d0", "Security audit: headers/CSP, pin function search_path, dependency updates"),
+      C("4e05204", "Collapse the add-stock form on /medicine and /feed behind an \u201cAdd\u201d disclosure; show the inventory first (open by default only when empty)"),
       C("3998f15", "Add a health-event detail page (/health-events/[id]) with treatments list + record-a-treatment; link from Recent activity and the timeline; extract DosageGuidance"),
       C("f676129", "Show label-based dosage guidance on each medicine suggestion (calc, verbatim label text, vet disclaimer)"),
       C("a6d2a24", "Label estimated_weight_kg as a manual estimate; show it on the animal detail header"),
@@ -377,14 +406,14 @@ children.push(
 
 // 11. Verification
 children.push(h1("11. Verification status"));
-children.push(bullet([t("Verified (10 Sep 2026): ", { bold: true }), code("npm run build"), t(" passes with a clean TypeScript check and no warnings; "), code("npm audit"), t(" reports 0 vulnerabilities; the five RPC functions (administer_treatment with the new p_dose_ml signature, administer_vaccination, log_feeding_event, record_sale, void_sale), the vaccinations_due view, and the 0008 columns are live in the project database (API probe); ubulimi.vercel.app returns HTTP 200; git main is level with origin.")]));
-children.push(bullet([t("Tested live on production (demo Owner / Worker on ubulimi.vercel.app): ", { bold: true }), t("grouped nav; Financials period switching + PDF; a feeding decrements feed stock; Remove sale (void_sale) deletes the sale and reactivates the animal, then a fresh sale re-marks it sold; a deceased / culled animal shows the “fix status first” note; a treatment dose of 500 ml against a medicine held in litres reduces stock by 0.5 L (1:1 when held in ml); the vaccinations-due link pre-selects animal + type; the dosage suggestion computes dose_per_kg × weight and always shows the vet disclaimer; the health-event page opens from Recent activity and the timeline, lists treatments given, records a new one, and toggles resolved / reopen; on /medicine and /feed the add form stays collapsed until the “Add” disclosure is clicked, with the inventory shown first. Demo data restored where practical.")]));
+children.push(bullet([t("Verified (17 Sep 2026): ", { bold: true }), code("npm run build"), t(" passes with a clean TypeScript check and no warnings; "), code("npm audit"), t(" reports 0 vulnerabilities; response headers (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, HSTS) confirmed present on ubulimi.vercel.app by curl, with no X-Powered-By; all 8 SECURITY DEFINER functions re-exercised live on production after migration 0009 with no errors; ubulimi.vercel.app returns HTTP 200; git main is level with origin.")]));
+children.push(bullet([t("Tested live on production (demo Owner / Worker on ubulimi.vercel.app): ", { bold: true }), t("grouped nav; Financials period switching + PDF; a feeding decrements feed stock; Remove sale (void_sale) deletes the sale and reactivates the animal, then a fresh sale re-marks it sold; a deceased / culled animal shows the “fix status first” note; a treatment dose of 500 ml against a medicine held in litres reduces stock by 0.5 L (1:1 when held in ml); the vaccinations-due link pre-selects animal + type; the dosage suggestion computes dose_per_kg × weight and always shows the vet disclaimer; the health-event page opens from Recent activity and the timeline, lists treatments given, records a new one, and toggles resolved / reopen; on /medicine and /feed the add form stays collapsed until the “Add” disclosure is clicked, with the inventory shown first; the single Menu button opens the grouped panel and every “← Back” link resolves correctly for both Owner and Worker; the four dashboard KPI cards navigate/link correctly; a post-migration-0009 pass re-recorded a treatment, a vaccination, a feeding, and a sale (then voided it) with no errors. Demo data restored where practical.")]));
 children.push(bullet([t("Exercised by the product owner during development: ", { bold: true }), t("the authenticated end-to-end flows across every CRUD screen and logging flow.")]));
 children.push(bullet([t("Not covered: ", { bold: true }), t("automated tests (there is no test suite); the actual file save of a generated PDF (generation path is verified, the browser save is silent in automation).")]));
 
 children.push(h1("12. Testing from a phone"));
 children.push(p("The app is a normal responsive web app served over HTTPS at https://ubulimi.vercel.app — there is nothing to install. To try it on a phone:"));
-children.push(bullet([t("1.  Confirm the Vercel production deployment is on the latest commit ("), code("4e05204"), t(" or newer) — Vercel dashboard → Deployments. It auto-deploys on push.")]));
+children.push(bullet([t("1.  Confirm the Vercel production deployment is on the latest commit ("), code("858a6d0"), t(" or newer) — Vercel dashboard → Deployments. It auto-deploys on push.")]));
 children.push(bullet("2.  Sign in with either a real owner / worker login (email + password), or — if demo mode is configured — the one-tap Owner / Worker buttons on the login screen (no password needed)."));
 children.push(bullet([t("3.  On the phone browser, open "), code("https://ubulimi.vercel.app"), t(", and work through: dashboard / today, the grouped nav menus, add an animal (type-or-pick species / breed), log a health event / vaccination / feeding, record and then remove a sale, open /financials and Download PDF, open an animal and Download Report.")]));
 children.push(bullet("4.  Optionally add it to the home screen (Share → Add to Home Screen) for an app-like launch. It is not an installable PWA — no service worker or manifest — so it still needs a connection, and there is no offline mode."));
