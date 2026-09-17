@@ -3,16 +3,19 @@ export default function Collapsible({
   count,
   accent = "var(--forest)",
   defaultOpen = false,
+  id,
   children,
 }: {
   title: string;
   count?: number;
   accent?: string;
   defaultOpen?: boolean;
+  id?: string;
   children: React.ReactNode;
 }) {
   return (
     <details
+      id={id}
       open={defaultOpen || undefined}
       style={{
         border: "1px solid var(--card-border)",

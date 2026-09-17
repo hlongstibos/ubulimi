@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import Nav from "@/app/ui/Nav";
 import Collapsible from "@/app/ui/Collapsible";
 import VaccinationsDue, { type DueRow } from "@/app/ui/VaccinationsDue";
+import StatCard from "@/app/ui/StatCard";
 
 const ON_FARM = ["active"];
 
@@ -99,24 +100,32 @@ export default async function DashboardPage() {
           marginBottom: 28,
         }}
       >
-        <StatCard label="Animals on farm" value={animalCount ?? 0} />
-        <StatCard label="Open health events" value={openHealthCount ?? 0} />
-        <StatCard label="Low-stock medicines" value={lowStockCount} />
-        <StatCard label="Vaccinations due" value={due.length} />
+        <StatCard label="Animals on farm" value={animalCount ?? 0} href="/animals" />
+        <StatCard
+          label="Open health events"
+          value={openHealthCount ?? 0}
+          sectionId="recent-activity"
+        />
+        <StatCard label="Low-stock medicines" value={lowStockCount} href="/medicine" />
+        <StatCard
+          label="Vaccinations due"
+          value={due.length}
+          sectionId="vaccinations-due"
+        />
       </section>
 
       <div style={{ display: "grid", gap: 14 }}>
         {due.length === 0 ? (
-          <Collapsible title="Vaccinations" count={0}>
+          <Collapsible id="vaccinations-due" title="Vaccinations" count={0}>
             <p style={{ color: "var(--text-muted)", margin: 0 }}>
               Nothing due.
             </p>
           </Collapsible>
         ) : (
-          <VaccinationsDue rows={due} />
+          <VaccinationsDue id="vaccinations-due" rows={due} />
         )}
 
-        <Collapsible title="Recent activity" count={events.length}>
+        <Collapsible id="recent-activity" title="Recent activity" count={events.length}>
           {events.length === 0 ? (
             <p style={{ color: "var(--text-muted)", margin: 0 }}>
               Nothing logged yet.
@@ -157,28 +166,5 @@ export default async function DashboardPage() {
         </Collapsible>
       </div>
     </main>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div
-      style={{
-        border: "1px solid var(--card-border)",
-        borderRadius: 12,
-        padding: "14px 16px",
-        background: "#fff",
-        boxShadow: "var(--card-shadow)",
-      }}
-    >
-      <div
-        style={{ fontSize: 30, fontWeight: 800, color: "var(--terracotta)" }}
-      >
-        {value}
-      </div>
-      <div style={{ color: "var(--text-muted)", fontSize: 12.5, marginTop: 2 }}>
-        {label}
-      </div>
-    </div>
   );
 }

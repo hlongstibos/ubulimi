@@ -31,7 +31,13 @@ function describe(row: DueRow, today: number): { text: string; urgent: boolean }
   return { text: `Due in ${days} day${days === 1 ? "" : "s"}`, urgent: false };
 }
 
-export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
+export default function VaccinationsDue({
+  rows,
+  id,
+}: {
+  rows: DueRow[];
+  id?: string;
+}) {
   if (rows.length === 0) {
     return (
       <p style={{ color: "var(--text-muted)", margin: 0 }}>
@@ -46,6 +52,7 @@ export default function VaccinationsDue({ rows }: { rows: DueRow[] }) {
 
   return (
     <Collapsible
+      id={id}
       title="Due & overdue vaccinations"
       count={rows.length}
       accent="var(--terracotta)"
