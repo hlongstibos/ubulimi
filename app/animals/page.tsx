@@ -52,10 +52,12 @@ export default async function AnimalsPage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("farm_id")
+    .select("role, farm_id")
     .eq("id", user.id)
     .single();
   if (!profile) redirect("/login");
+
+  const home = profile.role === "owner" ? "/dashboard" : "/today";
 
   if (!profile.farm_id) {
     return (
@@ -109,21 +111,33 @@ export default async function AnimalsPage({
         style={{
           marginBottom: 20,
           display: "flex",
-          alignItems: "baseline",
+          alignItems: "flex-start",
           justifyContent: "space-between",
           gap: 16,
         }}
       >
-        <h1
-          style={{
-            color: "var(--forest)",
-            fontSize: 24,
-            fontWeight: 800,
-            margin: 0,
-          }}
-        >
-          Animals
-        </h1>
+        <div>
+          <Link
+            href={home}
+            style={{
+              color: "var(--text-muted)",
+              fontSize: 13,
+              textDecoration: "none",
+            }}
+          >
+            &larr; Back
+          </Link>
+          <h1
+            style={{
+              color: "var(--forest)",
+              fontSize: 24,
+              fontWeight: 800,
+              margin: "8px 0 0",
+            }}
+          >
+            Animals
+          </h1>
+        </div>
         <Link
           href="/camps"
           style={{
@@ -131,6 +145,7 @@ export default async function AnimalsPage({
             fontSize: 14,
             fontWeight: 600,
             textDecoration: "none",
+            whiteSpace: "nowrap",
           }}
         >
           Manage camps

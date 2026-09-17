@@ -17,6 +17,8 @@ export default async function VaccinationsPage() {
     .single();
   if (!profile) redirect("/login");
 
+  const home = profile.role === "owner" ? "/dashboard" : "/today";
+
   if (!profile.farm_id) {
     return (
       <main style={{ maxWidth: 900, margin: "0 auto", padding: "28px 20px 48px" }}>
@@ -51,12 +53,22 @@ export default async function VaccinationsPage() {
         }}
       >
         <div>
+          <Link
+            href={home}
+            style={{
+              color: "var(--text-muted)",
+              fontSize: 13,
+              textDecoration: "none",
+            }}
+          >
+            &larr; Back
+          </Link>
           <h1
             style={{
               color: "var(--forest)",
               fontSize: 24,
               fontWeight: 800,
-              margin: 0,
+              margin: "8px 0 0",
             }}
           >
             Vaccinations

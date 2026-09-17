@@ -74,27 +74,20 @@ export default async function VaccinationTypesPage() {
 
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
-      <header
-        style={{
-          marginBottom: 24,
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-          gap: 16,
-        }}
-      >
-        <h1 style={{ color: "var(--forest)", margin: 0 }}>Vaccination types</h1>
+      <header style={{ marginBottom: 24 }}>
         <Link
           href="/dashboard"
           style={{
-            color: "var(--forest)",
-            fontSize: 14,
-            fontWeight: 600,
+            color: "var(--text-muted)",
+            fontSize: 13,
             textDecoration: "none",
           }}
         >
-          Dashboard
+          &larr; Back
         </Link>
+        <h1 style={{ color: "var(--forest)", margin: "8px 0 0" }}>
+          Vaccination types
+        </h1>
       </header>
 
       <section style={{ marginBottom: 32 }}>

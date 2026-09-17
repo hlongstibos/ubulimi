@@ -45,6 +45,8 @@ export default async function MedicinePage() {
     .single();
   if (!profile) redirect("/login");
 
+  const home = profile.role === "owner" ? "/dashboard" : "/today";
+
   if (!profile.farm_id) {
     return (
       <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
@@ -67,7 +69,17 @@ export default async function MedicinePage() {
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
       <header style={{ marginBottom: 24 }}>
-        <h1 style={{ color: "var(--forest)", margin: 0 }}>Medicine</h1>
+        <Link
+          href={home}
+          style={{
+            color: "var(--text-muted)",
+            fontSize: 13,
+            textDecoration: "none",
+          }}
+        >
+          &larr; Back
+        </Link>
+        <h1 style={{ color: "var(--forest)", margin: "8px 0 0" }}>Medicine</h1>
       </header>
 
       <section style={{ marginBottom: 24 }}>
