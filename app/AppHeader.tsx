@@ -58,10 +58,13 @@ export default function AppHeader() {
           href="/"
           aria-label="Home"
           style={{
-            color: "var(--forest)",
+            // A watermark, not a nav item competing with the button for
+            // height/weight: big, pale, letter-spaced — it recedes instead
+            // of needing to visually "match" the Log out pill.
+            color: "rgba(44, 95, 45, 0.38)",
             fontWeight: 800,
-            fontSize: 19,
-            letterSpacing: 1.2,
+            fontSize: 24,
+            letterSpacing: 2.5,
             textDecoration: "none",
             lineHeight: 1,
           }}
