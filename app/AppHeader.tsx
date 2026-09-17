@@ -18,10 +18,19 @@ export default function AppHeader() {
 
   async function logout() {
     setLoggingOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push("/login");
+      router.refresh();
+    } finally {
+      // AppHeader lives in the root layout and never unmounts — it just
+      // renders null while hidden — so this flag has to be reset by hand.
+      // Otherwise it stays stuck at true from this logout and shows
+      // "Logging out…" (button disabled) the next time someone signs
+      // back in, even though they're no longer logging out.
+      setLoggingOut(false);
+    }
   }
 
   return (
@@ -51,9 +60,10 @@ export default function AppHeader() {
           style={{
             color: "var(--forest)",
             fontWeight: 800,
-            fontSize: 15,
-            letterSpacing: 1.5,
+            fontSize: 19,
+            letterSpacing: 1.2,
             textDecoration: "none",
+            lineHeight: 1,
           }}
         >
           UBULIMI
@@ -72,7 +82,8 @@ export default function AppHeader() {
             fontSize: 12,
             fontWeight: 600,
             cursor: loggingOut ? "default" : "pointer",
-            padding: "5px 12px",
+            padding: "6px 14px",
+            whiteSpace: "nowrap",
           }}
         >
           {loggingOut ? "Logging out…" : "Log out"}
