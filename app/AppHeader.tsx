@@ -58,15 +58,19 @@ export default function AppHeader() {
           href="/"
           aria-label="Home"
           style={{
-            // A watermark, not a nav item competing with the button for
-            // height/weight: big, pale, letter-spaced — it recedes instead
-            // of needing to visually "match" the Log out pill.
-            color: "rgba(44, 95, 45, 0.38)",
+            // A solid badge, not plain text sized to match the button —
+            // it pops instead of needing to "align" with anything.
+            display: "inline-block",
+            background: "var(--forest)",
+            color: "#fff",
             fontWeight: 800,
-            fontSize: 24,
-            letterSpacing: 2.5,
+            fontSize: 15,
+            letterSpacing: 1.2,
             textDecoration: "none",
             lineHeight: 1,
+            padding: "7px 12px",
+            borderRadius: 8,
+            boxShadow: "0 2px 6px rgba(44, 95, 45, 0.28)",
           }}
         >
           UBULIMI
